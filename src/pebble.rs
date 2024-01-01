@@ -122,7 +122,6 @@ fn check_collisions(
         let collided_down = moai.height > pebble.y - PEBBLE_HEIGHT / 2.0;
         let collided_up = moai.height + MOAI_VERTICAL_DISTANCE < pebble.y + PEBBLE_HEIGHT / 2.0;
 
-        dbg!(collided_up, collided_down);
         if collided_down || collided_up {
             game_state.set(GameState::GameOver);
         }
