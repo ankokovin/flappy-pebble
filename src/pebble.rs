@@ -1,31 +1,33 @@
 use bevy::prelude::*;
 
-use crate::gamestate::GameState;
 use crate::gamesize::GameSize;
+use crate::gamestate::GameState;
 
 #[derive(Debug)]
 pub struct PebblePlugin {
-   game_size: GameSize,
+    game_size: GameSize,
 }
 
 impl Plugin for PebblePlugin {
     fn build(&self, app: &mut App) {
-        app
-            .insert_resource(self.game_size)
+        app.insert_resource(self.game_size)
             .add_systems(OnEnter(GameState::Playing), spawn_pebble)
             .add_systems(OnEnter(GameState::GameOver), despawn_pebble)
-            .add_systems(FixedUpdate, (pebble_move, check_death).run_if(in_state(GameState::Playing)))
-            .add_systems(Update, (player_input, render_pebble).run_if(in_state(GameState::Playing)));
+            .add_systems(
+                FixedUpdate,
+                (pebble_move, check_death).run_if(in_state(GameState::Playing)),
+            )
+            .add_systems(
+                Update,
+                (player_input, render_pebble).run_if(in_state(GameState::Playing)),
+            );
     }
 }
 
 impl PebblePlugin {
     pub fn new(min_y: f32, max_y: f32) -> PebblePlugin {
         PebblePlugin {
-            game_size: GameSize {
-                min_y, 
-                max_y
-            }
+            game_size: GameSize { min_y, max_y },
         }
     }
 }
@@ -41,10 +43,10 @@ const PEBBLE_DEFAULT_VELOCITY: f32 = 400.0;
 
 impl Default for Pebble {
     fn default() -> Self {
-        Self { 
-            velocity: PEBBLE_DEFAULT_VELOCITY, 
+        Self {
+            velocity: PEBBLE_DEFAULT_VELOCITY,
             x: 0.0,
-            y: 0.0 
+            y: 0.0,
         }
     }
 }
@@ -60,7 +62,7 @@ fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
             ..Default::default()
         },
-        Pebble::default()
+        Pebble::default(),
     ));
 }
 
@@ -68,22 +70,25 @@ const G_FORCE_ACCELERATION: f32 = -400.0;
 
 fn pebble_move(time: Res<Time<Fixed>>, mut pebble: Query<&mut Pebble>) {
     let mut pebble = pebble.get_single_mut().expect("to get a pebble");
-    pebble.y += pebble.velocity * time.delta_seconds() + G_FORCE_ACCELERATION * time.delta_seconds() * time.delta_seconds() / 2.0;
+    pebble.y += pebble.velocity * time.delta_seconds()
+        + G_FORCE_ACCELERATION * time.delta_seconds() * time.delta_seconds() / 2.0;
     pebble.velocity += G_FORCE_ACCELERATION * time.delta_seconds();
 }
 
-fn render_pebble(mut transform_pebble: Query<&mut Transform, With<Pebble>>, pebble: Query<&Pebble>) {
-    let mut transform = transform_pebble.get_single_mut().expect("to get a pebble transform");
+fn render_pebble(
+    mut transform_pebble: Query<&mut Transform, With<Pebble>>,
+    pebble: Query<&Pebble>,
+) {
+    let mut transform = transform_pebble
+        .get_single_mut()
+        .expect("to get a pebble transform");
     let pebble = pebble.get_single().expect("to get a pebble");
     transform.translation.x = pebble.x;
     transform.translation.y = pebble.y;
     transform.rotate_local_z(1.0e-1);
 }
 
-fn player_input(
-    input: Res<Input<KeyCode>>,
-    mut pebble: Query<&mut Pebble>
-) {
+fn player_input(input: Res<Input<KeyCode>>, mut pebble: Query<&mut Pebble>) {
     if input.just_pressed(KeyCode::Space) {
         let mut pebble = pebble.get_single_mut().expect("to get a pebble");
         pebble.velocity = PEBBLE_DEFAULT_VELOCITY;
@@ -93,7 +98,7 @@ fn player_input(
 fn check_death(
     query_pebble: Query<&Pebble>,
     game_size: Res<GameSize>,
-    mut game_state: ResMut<NextState<GameState>>
+    mut game_state: ResMut<NextState<GameState>>,
 ) {
     let pebble = query_pebble.get_single().expect("to get a pebble");
     if pebble.y < game_size.min_y {
@@ -101,11 +106,8 @@ fn check_death(
     }
 }
 
-fn despawn_pebble(
-    mut commands: Commands,
-    query_pebble: Query<Entity, With<Pebble>>
-) {
+fn despawn_pebble(mut commands: Commands, query_pebble: Query<Entity, With<Pebble>>) {
     for pebble in query_pebble.iter() {
         commands.entity(pebble).despawn_recursive();
-    } 
+    }
 }
