@@ -1,31 +1,43 @@
 mod gamesize;
 mod gamestate;
+mod moai;
 mod pebble;
 mod ui;
 
 use bevy::{prelude::*, window::WindowResolution};
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use gamesize::GameSize;
 use gamestate::GameState;
 
 fn main() {
     let height = 1024.0;
-    App::new()
+    let width = 512.0;
+    let mut app = App::new();
+    app
         .add_state::<GameState>()
+        .insert_resource(GameSize::new(width, height))
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
                     title: "Flappy rock :D".to_string(),
                     resizable: false,
-                    resolution: WindowResolution::new(512.0, height),
+                    resolution: WindowResolution::new(width, height),
                     ..Default::default()
                 }),
                 ..Default::default()
             }),
-            //max_y might become lower
-            pebble::PebblePlugin::new(-height / 2.0, height / 2.0),
+            pebble::PebblePlugin,
+            moai::MoaiPlugin,
             ui::UiPlugin,
         ))
-        .add_systems(Startup, spawn_camera)
-        .run();
+        .add_systems(Startup, spawn_camera);
+    
+    if cfg!(feature = "egui") {
+        app.add_plugins(WorldInspectorPlugin::default());    
+    }
+    
+    app.run();
+
 }
 
 fn spawn_camera(mut commands: Commands) {
