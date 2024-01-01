@@ -9,7 +9,7 @@ impl Plugin for UiPlugin {
         app.add_systems(OnEnter(GameState::GameOver), spawn_game_over_dialog)
             .add_systems(
                 Update,
-                restart_interaction_system.run_if(in_state(GameState::GameOver)),
+                (restart_button_interaction, player_input).run_if(in_state(GameState::GameOver)),
             )
             .add_systems(OnExit(GameState::GameOver), despawn_game_over_dialog);
     }
@@ -73,7 +73,7 @@ fn spawn_game_over_dialog(mut commands: Commands) {
         });
 }
 
-fn restart_interaction_system(
+fn restart_button_interaction(
     interaction_query: Query<&Interaction, (Changed<Interaction>, With<RestartButton>)>,
     mut next_state: ResMut<NextState<GameState>>,
 ) {
@@ -90,5 +90,11 @@ fn despawn_game_over_dialog(
 ) {
     for dialog in dialog_query.iter() {
         commands.entity(dialog).despawn_recursive();
+    }
+}
+
+fn player_input(input: Res<Input<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
+    if input.any_just_pressed(vec![KeyCode::Space, KeyCode::Return]) {
+        next_state.set(GameState::Playing);
     }
 }
