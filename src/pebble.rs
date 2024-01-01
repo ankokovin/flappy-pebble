@@ -84,7 +84,6 @@ fn render_pebble(
     let pebble = pebble.get_single().expect("to get a pebble");
     transform.translation.x = pebble.x;
     transform.translation.y = pebble.y;
-    //transform.rotate_local_z(1.0e-1);
 }
 
 fn player_input(input: Res<Input<KeyCode>>, mut pebble: Query<&mut Pebble>) {
