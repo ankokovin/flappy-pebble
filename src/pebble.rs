@@ -1,13 +1,31 @@
 use bevy::prelude::*;
 
-#[derive(Debug, Default)]
-pub struct PebblePlugin {}
+use crate::gamestate::GameState;
+use crate::gamesize::GameSize;
+
+#[derive(Debug)]
+pub struct PebblePlugin {
+   game_size: GameSize,
+}
 
 impl Plugin for PebblePlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, spawn_pebble)
-            .add_systems(FixedUpdate, pebble_move)
-            .add_systems(Update, (player_input, render_pebble));
+        app
+            .insert_resource(self.game_size)
+            .add_systems(OnEnter(GameState::Playing), spawn_pebble)
+            .add_systems(FixedUpdate, (pebble_move, check_death).run_if(in_state(GameState::Playing)))
+            .add_systems(Update, (player_input, render_pebble).run_if(in_state(GameState::Playing)));
+    }
+}
+
+impl PebblePlugin {
+    pub fn new(min_y: f32, max_y: f32) -> PebblePlugin {
+        PebblePlugin {
+            game_size: GameSize {
+                min_y, 
+                max_y
+            }
+        }
     }
 }
 
@@ -67,5 +85,16 @@ fn player_input(
     if input.just_pressed(KeyCode::Space) {
         let mut pebble = pebble.get_single_mut().expect("to get a pebble");
         pebble.velocity = PEBBLE_DEFAULT_VELOCITY;
+    }
+}
+
+fn check_death(
+    query_pebble: Query<&Pebble>,
+    game_size: Res<GameSize>,
+    mut game_state: ResMut<NextState<GameState>>
+) {
+    let pebble = query_pebble.get_single().expect("to get a pebble");
+    if pebble.y < game_size.min_y {
+        game_state.set(GameState::GameOver)
     }
 }
