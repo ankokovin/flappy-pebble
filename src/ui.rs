@@ -36,14 +36,18 @@ fn spawn_game_over_dialog(mut commands: Commands) {
                 ..Default::default()
             },
             GameOverDialog,
+            Name::new("GameOverDialog"),
         ))
         .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "GAME OVER",
-                TextStyle {
-                    font_size: 50.0,
-                    ..Default::default()
-                },
+            parent.spawn((
+                TextBundle::from_section(
+                    "GAME OVER",
+                    TextStyle {
+                        font_size: 50.0,
+                        ..Default::default()
+                    },
+                ),
+                Name::new("GameOverDialogText"),
             ));
             parent
                 .spawn((
@@ -52,14 +56,18 @@ fn spawn_game_over_dialog(mut commands: Commands) {
                         ..Default::default()
                     },
                     RestartButton,
+                    Name::new("RestartButton"),
                 ))
                 .with_children(|parent| {
-                    parent.spawn(TextBundle::from_section(
-                        "RESTART",
-                        TextStyle {
-                            font_size: 35.0,
-                            ..Default::default()
-                        },
+                    parent.spawn((
+                        TextBundle::from_section(
+                            "RESTART",
+                            TextStyle {
+                                font_size: 35.0,
+                                ..Default::default()
+                            },
+                        ),
+                        Name::new("RestartButtonText"),
                     ));
                 });
         });
