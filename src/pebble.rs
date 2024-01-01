@@ -13,6 +13,7 @@ impl Plugin for PebblePlugin {
         app
             .insert_resource(self.game_size)
             .add_systems(OnEnter(GameState::Playing), spawn_pebble)
+            .add_systems(OnEnter(GameState::GameOver), despawn_pebble)
             .add_systems(FixedUpdate, (pebble_move, check_death).run_if(in_state(GameState::Playing)))
             .add_systems(Update, (player_input, render_pebble).run_if(in_state(GameState::Playing)));
     }
@@ -76,6 +77,7 @@ fn render_pebble(mut transform_pebble: Query<&mut Transform, With<Pebble>>, pebb
     let pebble = pebble.get_single().expect("to get a pebble");
     transform.translation.x = pebble.x;
     transform.translation.y = pebble.y;
+    transform.rotate_local_z(1.0e-1);
 }
 
 fn player_input(
@@ -97,4 +99,13 @@ fn check_death(
     if pebble.y < game_size.min_y {
         game_state.set(GameState::GameOver)
     }
+}
+
+fn despawn_pebble(
+    mut commands: Commands,
+    query_pebble: Query<Entity, With<Pebble>>
+) {
+    for pebble in query_pebble.iter() {
+        commands.entity(pebble).despawn_recursive();
+    } 
 }

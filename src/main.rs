@@ -1,6 +1,7 @@
 mod pebble;
 mod gamestate;
 mod gamesize;
+mod ui;
 
 use bevy::{prelude::*, window::WindowResolution};
 use gamestate::GameState;
@@ -22,7 +23,8 @@ fn main() {
             }
         ),
         //max_y might become lower
-        pebble::PebblePlugin::new(-height / 2.0, height / 2.0)
+        pebble::PebblePlugin::new(-height / 2.0, height / 2.0),
+        ui::UiPlugin
         ))
         .add_systems(Startup, spawn_camera)
         .run();
