@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use rand::Rng;
 
 use crate::gamesize::GameSize;
 use crate::state::gamestate::GameState;
@@ -34,12 +35,12 @@ pub struct Pebble {
 
 const PEBBLE_DEFAULT_VELOCITY: f32 = 400.0;
 
-impl Default for Pebble {
-    fn default() -> Self {
-        Self {
+impl Pebble {
+    fn new(y: f32) -> Pebble {
+        Pebble {
             velocity: PEBBLE_DEFAULT_VELOCITY,
             x: 0.0,
-            y: 0.0,
+            y
         }
     }
 }
@@ -47,7 +48,11 @@ impl Default for Pebble {
 const PEBBLE_WIDTH: f32 = 90.0;
 const PEBBLE_HEIGHT: f32 = 52.0;
 
+const PEBBLE_START_Y_RANGE: std::ops::Range<f32> = -300.0 .. 300.0;
+
 fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let mut rng = rand::thread_rng();
+
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("pebblesona.png"),
@@ -61,7 +66,7 @@ fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
             },
             ..Default::default()
         },
-        Pebble::default(),
+        Pebble::new(rng.gen_range(PEBBLE_START_Y_RANGE)),
         Name::new("Pebble"),
     ));
 }
