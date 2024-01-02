@@ -138,7 +138,7 @@ fn move_moai(
         }
     }
 
-    if game_size.max_x - max_x >= MOAI_HORIZONTAL_DISTANCE {
+    if game_size.max_x + MOAI_WIDTH - max_x >= MOAI_HORIZONTAL_DISTANCE {
         let x = game_size.max_x;
         spawn_moai(commands, moai_texture, x);
     }
