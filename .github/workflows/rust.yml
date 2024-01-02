@@ -21,6 +21,8 @@ jobs:
     - name: Install wasm target
       run: rustup target add wasm32-unknown-unknown
     - uses: Swatinem/rust-cache@v2
+      with: 
+         cache-all-crates: true
     - name: Install wasm-bindgen
       run: cargo install wasm-bindgen-cli
     - name: Build
