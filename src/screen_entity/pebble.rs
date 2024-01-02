@@ -5,7 +5,7 @@ use crate::consts::{
 use bevy::prelude::*;
 use rand::Rng;
 
-use crate::gamesize::GameSize;
+use crate::game_size::GameSize;
 use crate::state::gamestate::GameState;
 
 use super::moai::Moai;

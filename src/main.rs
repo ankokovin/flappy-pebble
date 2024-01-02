@@ -1,5 +1,5 @@
 mod consts;
-mod gamesize;
+mod game_size;
 mod screen_entity;
 mod state;
 mod ui;
@@ -37,7 +37,7 @@ fn main() {
                 primary_window: Some(get_window(window_name, default_width, default_height)),
                 ..Default::default()
             }),
-        gamesize::GameSizeChangePlugin::new(default_width, default_height),
+        game_size::GameSizeChangePlugin::new(default_width, default_height),
         state::StatePlugin,
         screen_entity::GameEntityPlugin,
         ui::UiPlugin,

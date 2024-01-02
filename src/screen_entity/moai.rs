@@ -5,7 +5,7 @@ use crate::consts::{
     MOAI_HEIGHT, MOAI_HEIGHT_RANGE, MOAI_HORIZONTAL_DISTANCE, MOAI_MOVE_SPEED,
     MOAI_VERTICAL_DISTANCE, MOAI_WIDTH,
 };
-use crate::{gamesize::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
+use crate::{game_size::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
 
 pub struct MoaiPlugin;
 
