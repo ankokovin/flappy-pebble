@@ -14,7 +14,7 @@ pub struct GameScore {
 impl GameScore {
     pub fn inc_score(&mut self) {
         self.current_value += 1;
-        if (self.current_value > self.best_value) {
+        if self.current_value > self.best_value {
             self.is_high_score = true;
         }
     }

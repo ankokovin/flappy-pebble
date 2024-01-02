@@ -97,7 +97,11 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
 }
 
 fn spawn_init_moai(commands: Commands, game_size: Res<GameSize>, moai_texture: Res<MoaiTexture>) {
-    let mut x = if game_size.max_x < game_size.max_y {game_size.max_x} else {game_size.max_y} * 3.0;
+    let mut x = if game_size.max_x < game_size.max_y {
+        game_size.max_x
+    } else {
+        game_size.max_y
+    } * 3.0;
     if x < game_size.max_x + MOAI_WIDTH {
         x = game_size.max_x + MOAI_WIDTH;
     }
