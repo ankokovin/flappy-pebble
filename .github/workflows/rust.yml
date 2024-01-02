@@ -7,8 +7,14 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  build:
+  build-wasm:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -37,7 +43,7 @@ jobs:
         if-no-files-found: error
 
   publish-pages:
-    needs: build
+    needs: build-wasm
     runs-on: ubuntu-latest
     steps:
     - name: Deploy GitHub Pages site
