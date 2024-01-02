@@ -11,6 +11,6 @@ pub const PEBBLE_DEFAULT_VELOCITY: f32 = 400.0;
 pub const MOAI_VERTICAL_DISTANCE: f32 = 300.0;
 pub const MOAI_HEIGHT_RANGE: std::ops::Range<f32> = -200.0..200.0;
 pub const MOAI_MOVE_SPEED: f32 = 200.0;
-pub const MOAI_HORIZONTAL_DISTANCE: f32 = 400.0;
+pub const MOAI_HORIZONTAL_DISTANCE: f32 = 800.0;
 pub const MOAI_WIDTH: f32 = 100.0;
 pub const MOAI_HEIGHT: f32 = 1345.0;
