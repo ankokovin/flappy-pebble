@@ -1,16 +1,17 @@
 use crate::state::gamestate::GameState;
 use bevy::prelude::*;
+use crate::ui::buttons::{DEFAULT_BUTTON_COLOR, ChangeStateButton, change_state_button};
 
 pub struct MainMenuPlugin;
 
 #[cfg(not(target_family = "wasm"))]
 fn update_systems() -> impl IntoSystemConfigs<()> {
-    (start_button_interaction, exit_button_interaction).run_if(in_state(GameState::MainMenu))
+    (StartGameButton::interaction_system, ExitButton::interaction_system).run_if(in_state(GameState::MainMenu))
 }
 
 #[cfg(target_family = "wasm")]
 fn update_systems() -> impl IntoSystemConfigs<()> {
-    (start_button_interaction).run_if(in_state(GameState::MainMenu))
+    StartGameButton::interaction_system.run_if(in_state(GameState::MainMenu))
 }
 
 impl Plugin for MainMenuPlugin {
@@ -24,10 +25,13 @@ impl Plugin for MainMenuPlugin {
 #[derive(Debug, Component)]
 struct MainMenu;
 
-#[derive(Debug, Component)]
+#[derive(Debug, Component, ChangeStateButton)]
+#[target_state(Playing)]
 struct StartGameButton;
 
-#[derive(Debug, Component)]
+
+#[derive(Debug, Component, ChangeStateButton)]
+#[target_state(Exit)]
 struct ExitButton;
 
 fn spawn_main_menu(mut commands: Commands) {
@@ -76,18 +80,15 @@ fn spawn_main_menu(mut commands: Commands) {
                 ))
                 .with_children(|parent| {
                     parent
-                        .spawn((
+                        .spawn(change_state_button(
                             ButtonBundle {
-                                background_color: BackgroundColor(Color::GRAY),
+                                background_color: DEFAULT_BUTTON_COLOR.into(),
                                 style: Style {
                                     padding: UiRect::all(Val::Px(20.0)),
                                     ..default()
                                 },
                                 ..default()
-                            },
-                            StartGameButton,
-                            Name::new("StartGameButton"),
-                        ))
+                            }, StartGameButton))
                         .with_children(|parent| {
                             parent.spawn((
                                 TextBundle::from_section(
@@ -102,19 +103,16 @@ fn spawn_main_menu(mut commands: Commands) {
                         });
 
                     if !cfg!(target_family = "wasm") {
-                        parent
-                            .spawn((
+                        parent.spawn(change_state_button(
                                 ButtonBundle {
-                                    background_color: BackgroundColor(Color::GRAY),
+                                    background_color: DEFAULT_BUTTON_COLOR.into(),
                                     style: Style {
                                         padding: UiRect::all(Val::Px(20.0)),
                                         ..default()
                                     },
                                     ..default()
                                 },
-                                ExitButton,
-                                Name::new("ExitButton"),
-                            ))
+                                ExitButton))
                             .with_children(|parent| {
                                 parent.spawn((
                                     TextBundle::from_section(
@@ -135,28 +133,5 @@ fn spawn_main_menu(mut commands: Commands) {
 fn despawn_main_menu(mut commands: Commands, query: Query<Entity, With<MainMenu>>) {
     for menu in query.iter() {
         commands.entity(menu).despawn_recursive();
-    }
-}
-
-fn start_button_interaction(
-    interaction_query: Query<&Interaction, (Changed<Interaction>, With<StartGameButton>)>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    for interaction in interaction_query.iter() {
-        if *interaction == Interaction::Pressed {
-            next_state.set(GameState::Playing);
-        }
-    }
-}
-
-#[cfg(not(target_family = "wasm"))]
-fn exit_button_interaction(
-    interaction_query: Query<&Interaction, (Changed<Interaction>, With<ExitButton>)>,
-    mut exit: EventWriter<bevy::app::AppExit>,
-) {
-    for interaction in interaction_query.iter() {
-        if *interaction == Interaction::Pressed {
-            exit.send(bevy::app::AppExit);
-        }
     }
 }

@@ -1,6 +1,7 @@
 mod game_over_dialog;
 mod main_menu;
 mod scoreboard;
+mod buttons;
 
 pub struct UiPlugin;
 

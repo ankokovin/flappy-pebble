@@ -3,12 +3,13 @@ mod game_size;
 mod screen_entity;
 mod state;
 mod ui;
+mod gamepad_util;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 #[cfg(target_family = "wasm")]
-fn get_window(_window_name: &str, _width: f32, _height: f32) -> Window {
+fn get_window(_window_name: String, _width: f32, _height: f32) -> Window {
     Window {
         fit_canvas_to_parent: true,
         ..default()
@@ -16,9 +17,9 @@ fn get_window(_window_name: &str, _width: f32, _height: f32) -> Window {
 }
 
 #[cfg(not(target_family = "wasm"))]
-fn get_window(window_name: &str, width: f32, height: f32) -> Window {
+fn get_window(window_name: String, width: f32, height: f32) -> Window {
     Window {
-        title: window_name.to_string(),
+        title: window_name,
         resizable: true,
         resolution: bevy::window::WindowResolution::new(width, height),
         ..Default::default()
@@ -36,7 +37,7 @@ fn main() {
 
     let default_height = consts.window_height;
     let default_width = consts.window_width;
-    let window_name = consts.window_name;
+    let window_name = consts.window_name.clone();
 
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {

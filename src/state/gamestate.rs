@@ -6,12 +6,18 @@ pub enum GameState {
     MainMenu,
     Playing,
     GameOver,
+    Exit,
 }
 
 pub struct GameStatePlugin;
 
 impl Plugin for GameStatePlugin {
     fn build(&self, app: &mut App) {
-        app.add_state::<GameState>();
+        app.add_state::<GameState>()
+            .add_systems(OnEnter(GameState::Exit), exit);
     }
+}
+
+fn exit(mut exit: EventWriter<bevy::app::AppExit>) {
+    exit.send(bevy::app::AppExit);
 }

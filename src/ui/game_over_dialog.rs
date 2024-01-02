@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use super::buttons::{change_state_button, ChangeStateButton, DEFAULT_BUTTON_COLOR};
 
 use crate::state::{gamescore::GameScore, gamestate::GameState};
 
@@ -10,8 +11,8 @@ impl Plugin for GameOverDialogPlugin {
             .add_systems(
                 Update,
                 (
-                    restart_button_interaction,
-                    main_menu_button_interation,
+                    RestartButton::interaction_system,
+                    MainMenuButton::interaction_system,
                     player_input,
                 )
                     .run_if(in_state(GameState::GameOver)),
@@ -20,10 +21,14 @@ impl Plugin for GameOverDialogPlugin {
     }
 }
 
-#[derive(Component)]
+#[derive(Component, ChangeStateButton)]
+#[keyboard(Return, Space)]
+#[target_state(Playing)]
 struct RestartButton;
 
-#[derive(Component)]
+#[derive(Component, ChangeStateButton)]
+#[keyboard(Escape)]
+#[target_state(MainMenu)]
 struct MainMenuButton;
 
 #[derive(Component)]
@@ -92,18 +97,16 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
             }
 
             parent
-                .spawn((
+                .spawn(change_state_button(
                     ButtonBundle {
-                        background_color: BackgroundColor(Color::GRAY),
+                        background_color: BackgroundColor(DEFAULT_BUTTON_COLOR),
                         style: Style {
                             padding: UiRect::all(Val::Px(20.0)),
                             ..Default::default()
                         },
                         ..Default::default()
                     },
-                    RestartButton,
-                    Name::new("RestartButton"),
-                ))
+                    RestartButton))
                 .with_children(|parent| {
                     parent.spawn((
                         TextBundle::from_section(
@@ -118,9 +121,9 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                 });
 
             parent
-                .spawn((
+                .spawn(change_state_button(
                     ButtonBundle {
-                        background_color: BackgroundColor(Color::GRAY),
+                        background_color: BackgroundColor(DEFAULT_BUTTON_COLOR),
                         style: Style {
                             padding: UiRect::all(Val::Px(20.0)),
                             ..Default::default()
@@ -128,7 +131,6 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                         ..Default::default()
                     },
                     MainMenuButton,
-                    Name::new("MainMenuButton"),
                 ))
                 .with_children(|parent| {
                     parent.spawn((
@@ -143,28 +145,6 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                     ));
                 });
         });
-}
-
-fn restart_button_interaction(
-    interaction_query: Query<&Interaction, (Changed<Interaction>, With<RestartButton>)>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    for interaction in interaction_query.iter() {
-        if *interaction == Interaction::Pressed {
-            next_state.set(GameState::Playing);
-        }
-    }
-}
-
-fn main_menu_button_interation(
-    interaction_query: Query<&Interaction, (Changed<Interaction>, With<MainMenuButton>)>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    for interaction in interaction_query.iter() {
-        if *interaction == Interaction::Pressed {
-            next_state.set(GameState::MainMenu);
-        }
-    }
 }
 
 fn despawn_game_over_dialog(
