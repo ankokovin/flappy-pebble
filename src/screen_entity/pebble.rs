@@ -21,11 +21,18 @@ impl Plugin for PebblePlugin {
                 (despawn_pebble, spawn_pebble).chain(),
             )
             .add_systems(
+                OnEnter(GameState::MainMenu),
+                despawn_pebble
+            )
+            .add_systems(
                 FixedUpdate,
                 (pebble_move, check_death_down, check_collisions)
                     .run_if(in_state(GameState::Playing)),
             )
-            .add_systems(Update, render_pebble)
+            .add_systems(
+                Update,
+                render_pebble.run_if(not(in_state(GameState::MainMenu))),
+            )
             .add_systems(Update, player_input.run_if(in_state(GameState::Playing)));
     }
 }

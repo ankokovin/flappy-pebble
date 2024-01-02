@@ -17,6 +17,10 @@ impl Plugin for MoaiPlugin {
                 OnEnter(GameState::Playing),
                 (despawn_all_moai, spawn_init_moai).chain(),
             )
+            .add_systems(
+                OnEnter(GameState::MainMenu),
+                despawn_all_moai
+            )
             .add_systems(Update, render_moai)
             .add_systems(
                 Update,
