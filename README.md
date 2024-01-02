@@ -1,3 +1,5 @@
+[![Rust](https://github.com/ankokovin/flappy-pebble/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/ankokovin/flappy-pebble/actions/workflows/rust.yml)
+
 # Flappy Pebble
 
 This is my mini project to familiarize myself with [Bevy game engine](https://bevyengine.org).
