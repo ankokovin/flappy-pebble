@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{gamesize::GameSize, gamestate::GameState};
+use crate::{gamescore::GameScore, gamesize::GameSize, gamestate::GameState};
 
 pub struct MoaiPlugin;
 
@@ -120,10 +120,19 @@ fn move_moai(
     commands: Commands,
     game_size: Res<GameSize>,
     moai_texture: Res<MoaiTexture>,
+    mut game_score: ResMut<GameScore>,
 ) {
     let mut max_x = f32::MIN;
     for mut moai in query_all_moai.iter_mut() {
-        moai.x -= MOAI_MOVE_SPEED * time.delta_seconds();
+        let before = moai.x;
+        let after = before - MOAI_MOVE_SPEED * time.delta_seconds();
+
+        if before >= 0.0 && after <= 0.0 {
+            game_score.inc_score();
+            dbg!(&game_score);
+        }
+
+        moai.x = after;
         if moai.x > max_x {
             max_x = moai.x;
         }

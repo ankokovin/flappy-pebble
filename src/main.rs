@@ -1,3 +1,4 @@
+mod gamescore;
 mod gamesize;
 mod gamestate;
 mod moai;
@@ -27,6 +28,7 @@ fn main() {
             }),
             pebble::PebblePlugin,
             moai::MoaiPlugin,
+            gamescore::GameScorePlugin,
             ui::UiPlugin,
         ))
         .add_systems(Startup, spawn_camera);
