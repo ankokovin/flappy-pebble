@@ -18,15 +18,15 @@ impl GameSize {
 
     fn update(&mut self, width: f32, height: f32) {
         self.min_x = -width / 2.0;
-        self.max_x =  width / 2.0;
+        self.max_x = width / 2.0;
         self.min_y = -height / 2.0;
-        self.max_y =  height / 2.0;
+        self.max_y = height / 2.0;
     }
 }
 
 pub struct GameSizeChangePlugin {
-    width:  f32,
-    height: f32
+    width: f32,
+    height: f32,
 }
 
 impl Plugin for GameSizeChangePlugin {
@@ -38,17 +38,11 @@ impl Plugin for GameSizeChangePlugin {
 
 impl GameSizeChangePlugin {
     pub fn new(width: f32, height: f32) -> GameSizeChangePlugin {
-        GameSizeChangePlugin {
-            width,
-            height
-        }
+        GameSizeChangePlugin { width, height }
     }
 }
 
-fn on_resize(
-    mut resize_reader: EventReader<WindowResized>,
-    mut game_size: ResMut<GameSize>
-) {
+fn on_resize(mut resize_reader: EventReader<WindowResized>, mut game_size: ResMut<GameSize>) {
     let e = resize_reader.read().last();
     if let Some(e) = e {
         game_size.update(e.width, e.height);

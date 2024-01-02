@@ -1,7 +1,4 @@
-use crate::consts::{
-    G_FORCE_ACCELERATION, MOAI_VERTICAL_DISTANCE, MOAI_WIDTH, PEBBLE_DEFAULT_VELOCITY,
-    PEBBLE_HEIGHT, PEBBLE_START_Y_RANGE, PEBBLE_WIDTH,
-};
+use crate::consts::Consts;
 use bevy::prelude::*;
 use rand::Rng;
 
@@ -20,10 +17,7 @@ impl Plugin for PebblePlugin {
                 OnEnter(GameState::Playing),
                 (despawn_pebble, spawn_pebble).chain(),
             )
-            .add_systems(
-                OnEnter(GameState::MainMenu),
-                despawn_pebble
-            )
+            .add_systems(OnEnter(GameState::MainMenu), despawn_pebble)
             .add_systems(
                 FixedUpdate,
                 (pebble_move, check_death_down, check_collisions)
@@ -45,16 +39,16 @@ pub struct Pebble {
 }
 
 impl Pebble {
-    fn new(y: f32) -> Pebble {
+    fn new(y: f32, velocity: f32) -> Pebble {
         Pebble {
-            velocity: PEBBLE_DEFAULT_VELOCITY,
+            velocity,
             x: 0.0,
             y,
         }
     }
 }
 
-fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>, consts: Res<Consts>) {
     let mut rng = rand::thread_rng();
 
     commands.spawn((
@@ -63,23 +57,26 @@ fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
             sprite: Sprite {
                 flip_x: true,
                 custom_size: Some(Vec2 {
-                    x: PEBBLE_WIDTH,
-                    y: PEBBLE_HEIGHT,
+                    x: consts.pebble_width,
+                    y: consts.pebble_height,
                 }),
                 ..Default::default()
             },
             ..Default::default()
         },
-        Pebble::new(rng.gen_range(PEBBLE_START_Y_RANGE)),
+        Pebble::new(
+            rng.gen_range(consts.pebble_start_y_range.clone()),
+            consts.pebble_default_velocity,
+        ),
         Name::new("Pebble"),
     ));
 }
 
-fn pebble_move(time: Res<Time<Fixed>>, mut pebble: Query<&mut Pebble>) {
+fn pebble_move(time: Res<Time<Fixed>>, mut pebble: Query<&mut Pebble>, consts: Res<Consts>) {
     let mut pebble = pebble.get_single_mut().expect("to get a pebble");
     pebble.y += pebble.velocity * time.delta_seconds()
-        + G_FORCE_ACCELERATION * time.delta_seconds() * time.delta_seconds() / 2.0;
-    pebble.velocity += G_FORCE_ACCELERATION * time.delta_seconds();
+        + consts.g_force_acceleration * time.delta_seconds() * time.delta_seconds() / 2.0;
+    pebble.velocity += consts.g_force_acceleration * time.delta_seconds();
 }
 
 fn render_pebble(
@@ -94,10 +91,10 @@ fn render_pebble(
     transform.translation.y = pebble.y;
 }
 
-fn player_input(input: Res<Input<KeyCode>>, mut pebble: Query<&mut Pebble>) {
+fn player_input(input: Res<Input<KeyCode>>, mut pebble: Query<&mut Pebble>, consts: Res<Consts>) {
     if input.just_pressed(KeyCode::Space) {
         let mut pebble = pebble.get_single_mut().expect("to get a pebble");
-        pebble.velocity = PEBBLE_DEFAULT_VELOCITY;
+        pebble.velocity = consts.pebble_default_velocity;
     }
 }
 
@@ -117,17 +114,21 @@ fn check_collisions(
     query_pebble: Query<&Pebble>,
     query_moai: Query<&Moai>,
     mut game_state: ResMut<NextState<GameState>>,
+    consts: Res<Consts>,
 ) {
     let pebble = query_pebble.get_single().expect("to get a pebble");
     for moai in query_moai.iter() {
-        let already_passed = moai.x + MOAI_WIDTH / 2.0 < pebble.x - PEBBLE_WIDTH / 2.0;
-        let not_reached_yet = moai.x - MOAI_WIDTH / 2.0 > pebble.x + PEBBLE_WIDTH / 2.0;
+        let already_passed =
+            moai.x + consts.moai_width / 2.0 < pebble.x - consts.pebble_width / 2.0;
+        let not_reached_yet =
+            moai.x - consts.moai_width / 2.0 > pebble.x + consts.pebble_width / 2.0;
         if not_reached_yet || already_passed {
             continue;
         }
 
-        let collided_down = moai.height > pebble.y - PEBBLE_HEIGHT / 2.0;
-        let collided_up = moai.height + MOAI_VERTICAL_DISTANCE < pebble.y + PEBBLE_HEIGHT / 2.0;
+        let collided_down = moai.height > pebble.y - consts.pebble_height / 2.0;
+        let up_moai_start_y = moai.height + consts.moai_vertical_distance;
+        let collided_up = up_moai_start_y < pebble.y + consts.pebble_height / 2.0;
 
         if collided_down || collided_up {
             game_state.set(GameState::GameOver);

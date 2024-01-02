@@ -16,10 +16,7 @@ fn update_systems() -> impl IntoSystemConfigs<()> {
 impl Plugin for MainMenuPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::MainMenu), spawn_main_menu)
-            .add_systems(
-                Update,
-                update_systems(),
-            )
+            .add_systems(Update, update_systems())
             .add_systems(OnExit(GameState::MainMenu), despawn_main_menu);
     }
 }
@@ -93,10 +90,13 @@ fn spawn_main_menu(mut commands: Commands) {
                         ))
                         .with_children(|parent| {
                             parent.spawn((
-                                TextBundle::from_section("Start game", TextStyle {
-                                    font_size: 20.0,
-                                    ..default()
-                                }),
+                                TextBundle::from_section(
+                                    "Start game",
+                                    TextStyle {
+                                        font_size: 20.0,
+                                        ..default()
+                                    },
+                                ),
                                 Name::new("StartGameButtonLabel"),
                             ));
                         });
@@ -117,10 +117,13 @@ fn spawn_main_menu(mut commands: Commands) {
                             ))
                             .with_children(|parent| {
                                 parent.spawn((
-                                    TextBundle::from_section("Exit", TextStyle {
-                                        font_size: 20.0,
-                                        ..default()
-                                    }),
+                                    TextBundle::from_section(
+                                        "Exit",
+                                        TextStyle {
+                                            font_size: 20.0,
+                                            ..default()
+                                        },
+                                    ),
                                     Name::new("ExitButtonLabel"),
                                 ));
                             });
@@ -149,7 +152,7 @@ fn start_button_interaction(
 #[cfg(not(target_family = "wasm"))]
 fn exit_button_interaction(
     interaction_query: Query<&Interaction, (Changed<Interaction>, With<ExitButton>)>,
-    mut exit: EventWriter<bevy::app::AppExit>
+    mut exit: EventWriter<bevy::app::AppExit>,
 ) {
     for interaction in interaction_query.iter() {
         if *interaction == Interaction::Pressed {

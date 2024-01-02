@@ -7,8 +7,6 @@ mod ui;
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
-
-
 #[cfg(target_family = "wasm")]
 fn get_window(_window_name: &str, _width: f32, _height: f32) -> Window {
     Window {
@@ -28,21 +26,29 @@ fn get_window(window_name: &str, width: f32, height: f32) -> Window {
 }
 
 fn main() {
-    let default_height = consts::WINDOW_HEIGHT;
-    let default_width = consts::WINDOW_WIDTH;
-    let window_name = consts::WINDOW_NAME;
     let mut app = App::new();
+    app.add_plugins(consts::ConstsPlugin);
+
+    let consts = app
+        .world
+        .get_resource::<consts::Consts>()
+        .expect("to have Consts resource");
+
+    let default_height = consts.window_height;
+    let default_width = consts.window_width;
+    let window_name = consts.window_name;
+
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {
-                primary_window: Some(get_window(window_name, default_width, default_height)),
-                ..Default::default()
-            }),
+            primary_window: Some(get_window(window_name, default_width, default_height)),
+            ..Default::default()
+        }),
         game_size::GameSizeChangePlugin::new(default_width, default_height),
         state::StatePlugin,
         screen_entity::GameEntityPlugin,
         ui::UiPlugin,
-        ))
-        .add_systems(Startup, spawn_camera);
+    ))
+    .add_systems(Startup, spawn_camera);
 
     if cfg!(feature = "egui") {
         app.add_plugins(WorldInspectorPlugin::default());
