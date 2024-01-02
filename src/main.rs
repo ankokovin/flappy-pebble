@@ -6,6 +6,14 @@ mod ui;
 
 use bevy::{prelude::*, window::WindowResolution};
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+fn get_window(window_name: &str, width: f32, height: f32) -> Window {
+    Window {
+        title: window_name.to_string(),
+        resizable: false,
+        resolution: WindowResolution::new(width, height),
+        ..Default::default()
+    }
+}
 
 fn main() {
     let height = consts::WINDOW_HEIGHT;
@@ -15,12 +23,7 @@ fn main() {
     app.insert_resource(gamesize::GameSize::new(width, height))
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
-                primary_window: Some(Window {
-                    title: window_name.to_string(),
-                    resizable: false,
-                    resolution: WindowResolution::new(width, height),
-                    ..Default::default()
-                }),
+                primary_window: Some(get_window(window_name, width, height)),
                 ..Default::default()
             }),
             state::StatePlugin,
