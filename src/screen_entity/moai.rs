@@ -50,14 +50,17 @@ fn load_texture(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 pub const MOAI_VERTICAL_DISTANCE: f32 = 300.0;
 
-const MOAI_HEIGHT_RANGE: std::ops::Range<f32> = -200.0 .. 200.0;
+const MOAI_HEIGHT_RANGE: std::ops::Range<f32> = -200.0..200.0;
 
 fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
     let mut rng = rand::thread_rng();
     commands
         .spawn((
             SpatialBundle::default(),
-            Moai { x, height: rng.gen_range(MOAI_HEIGHT_RANGE) },
+            Moai {
+                x,
+                height: rng.gen_range(MOAI_HEIGHT_RANGE),
+            },
             Name::new("Moai"),
         ))
         .with_children(|parent| {

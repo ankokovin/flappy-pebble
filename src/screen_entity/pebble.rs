@@ -40,7 +40,7 @@ impl Pebble {
         Pebble {
             velocity: PEBBLE_DEFAULT_VELOCITY,
             x: 0.0,
-            y
+            y,
         }
     }
 }
@@ -48,7 +48,7 @@ impl Pebble {
 const PEBBLE_WIDTH: f32 = 90.0;
 const PEBBLE_HEIGHT: f32 = 52.0;
 
-const PEBBLE_START_Y_RANGE: std::ops::Range<f32> = -300.0 .. 300.0;
+const PEBBLE_START_Y_RANGE: std::ops::Range<f32> = -300.0..300.0;
 
 fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut rng = rand::thread_rng();
