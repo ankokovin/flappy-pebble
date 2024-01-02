@@ -2,12 +2,15 @@ name: Rust
 
 on:
   push:
-    branches: [ "main", "test-build" ]
+    branches: "main"
+    paths:
+      - "/src/**/*"
+      - "/assets/**/*"
+      - ".github/workflows/rust.yml"
 
 env:
   CARGO_TERM_COLOR: always
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
