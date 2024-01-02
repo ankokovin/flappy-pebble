@@ -21,7 +21,7 @@ impl GameScore {
 
     fn update_high_score(&mut self) {
         debug_assert!(self.current_value > self.best_value);
-        self.current_value = self.best_value;
+        self.best_value = self.current_value;
     }
 
     pub fn get_current(&self) -> Score {

@@ -10,7 +10,7 @@ impl Plugin for ScoreBoardPlugin {
             .add_systems(OnExit(GameState::Playing), despawn_scoreboard)
             .add_systems(
                 Update,
-                update_scoreboard.run_if(in_state(GameState::Playing)),
+                (update_scoreboard, update_is_highscore_label).run_if(in_state(GameState::Playing)),
             );
     }
 }
@@ -20,6 +20,9 @@ struct ScoreBoard;
 
 #[derive(Debug, Component)]
 struct ScoreLabel;
+
+#[derive(Debug, Component)]
+struct IsHighScoreLabel;
 
 fn spawn_scoreboard(mut commands: Commands) {
     commands
@@ -72,6 +75,18 @@ fn spawn_scoreboard(mut commands: Commands) {
                         Name::new("ScoreLabel"),
                     ));
                 });
+
+            parent.spawn((
+                TextBundle::from_section(
+                    "",
+                    TextStyle {
+                        font_size: 20.0,
+                        color: Color::RED,
+                        ..default()
+                    },
+                ),
+                IsHighScoreLabel,
+            ));
         });
 }
 
@@ -89,4 +104,18 @@ fn update_scoreboard(
     let mut text = query_score_label.single_mut();
     let section = text.sections.first_mut().expect("to have a TextSection");
     section.value = game_score.get_current().to_string();
+}
+
+fn update_is_highscore_label(
+    game_score: Res<GameScore>,
+    mut query_is_highscore_label: Query<&mut Text, With<IsHighScoreLabel>>,
+) {
+    let mut text = query_is_highscore_label.single_mut();
+    let section = text.sections.first_mut().expect("to have a TextSection");
+    section.value = (if game_score.is_new_high_score() {
+        "Highscore!"
+    } else {
+        ""
+    })
+    .to_string();
 }
