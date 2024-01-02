@@ -129,7 +129,6 @@ fn move_moai(
 
         if before >= 0.0 && after <= 0.0 {
             game_score.inc_score();
-            dbg!(&game_score);
         }
 
         moai.x = after;
