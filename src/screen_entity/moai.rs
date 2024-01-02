@@ -97,7 +97,10 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
 }
 
 fn spawn_init_moai(commands: Commands, game_size: Res<GameSize>, moai_texture: Res<MoaiTexture>) {
-    let x = game_size.max_x * 3.0;
+    let mut x = if game_size.max_x < game_size.max_y {game_size.max_x} else {game_size.max_y} * 3.0;
+    if x < game_size.max_x + MOAI_WIDTH {
+        x = game_size.max_x + MOAI_WIDTH;
+    }
     spawn_moai(commands, moai_texture, x)
 }
 
@@ -138,7 +141,7 @@ fn move_moai(
     }
 
     if game_size.max_x + MOAI_WIDTH - max_x >= MOAI_HORIZONTAL_DISTANCE {
-        let x = game_size.max_x;
+        let x = game_size.max_x + MOAI_WIDTH;
         spawn_moai(commands, moai_texture, x);
     }
 }
