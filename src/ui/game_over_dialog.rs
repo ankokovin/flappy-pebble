@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
-use crate::gamestate::GameState;
+use crate::{gamescore::GameScore, gamestate::GameState};
 
-pub struct UiPlugin;
+pub struct GameOverDialogPlugin;
 
-impl Plugin for UiPlugin {
+impl Plugin for GameOverDialogPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::GameOver), spawn_game_over_dialog)
             .add_systems(
@@ -21,7 +21,7 @@ struct RestartButton;
 #[derive(Component)]
 struct GameOverDialog;
 
-fn spawn_game_over_dialog(mut commands: Commands) {
+fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
     commands
         .spawn((
             NodeBundle {
@@ -49,10 +49,47 @@ fn spawn_game_over_dialog(mut commands: Commands) {
                 ),
                 Name::new("GameOverDialogText"),
             ));
+            parent.spawn((
+                TextBundle::from_section(
+                    "Score: ".to_string() + &game_score.get_current().to_string(),
+                    TextStyle {
+                        font_size: 30.0,
+                        ..Default::default()
+                    },
+                ),
+                Name::new("GameScoreLabel"),
+            ));
+            if game_score.is_new_highscore() {
+                parent.spawn((
+                    TextBundle::from_section(
+                        "New high score!",
+                        TextStyle {
+                            font_size: 30.0,
+                            ..Default::default()
+                        },
+                    ),
+                    Name::new("NewHighScoreLabel"),
+                ));
+            } else {
+                parent.spawn((
+                    TextBundle::from_section(
+                        "Highscore: ".to_string() + &game_score.get_best().to_string(),
+                        TextStyle {
+                            font_size: 30.0,
+                            ..Default::default()
+                        },
+                    ),
+                    Name::new("HighScoreLabel"),
+                ));
+            }
             parent
                 .spawn((
                     ButtonBundle {
                         background_color: BackgroundColor(Color::GRAY),
+                        style: Style {
+                            padding: UiRect::all(Val::Px(20.0)),
+                            ..Default::default()
+                        },
                         ..Default::default()
                     },
                     RestartButton,
