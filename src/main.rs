@@ -1,9 +1,9 @@
 mod consts;
 mod game_size;
+mod gamepad_util;
 mod screen_entity;
 mod state;
 mod ui;
-mod gamepad_util;
 
 use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
@@ -28,26 +28,20 @@ fn get_window(window_name: String, width: f32, height: f32) -> Window {
 
 fn main() {
     let mut app = App::new();
-    app.add_plugins(consts::ConstsPlugin);
-
-    let consts = app
-        .world
-        .get_resource::<consts::Consts>()
-        .expect("to have Consts resource");
-
-    let default_height = consts.window_height;
-    let default_width = consts.window_width;
-    let window_name = consts.window_name.clone();
 
     app.add_plugins((
         DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(get_window(window_name, default_width, default_height)),
-            ..Default::default()
+            primary_window: Some(get_window(
+                consts::WINDOW_NAME.to_string(),
+                consts::WINDOW_WIDTH,
+                consts::WINDOW_HEIGHT,
+            )),
+            ..default()
         }),
-        game_size::GameSizeChangePlugin::new(default_width, default_height),
         state::StatePlugin,
         screen_entity::GameEntityPlugin,
         ui::UiPlugin,
+        game_size::GameSizeChangePlugin::new(0.0, 0.0),
     ))
     .add_systems(Startup, spawn_camera);
 

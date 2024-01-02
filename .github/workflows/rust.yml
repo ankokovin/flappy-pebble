@@ -38,8 +38,6 @@ jobs:
       run: wasm-bindgen --no-typescript --target web --out-dir ./wasm-build/ --out-name "bevy-flappy-pebble" ./target/wasm32-unknown-unknown/release/bevy-flappy-pebble.wasm
     - name: Copy sprites
       run: cp ./assets/*.png ./wasm-build/assets
-    - name: Copy RONs
-      run: cp ./assets/*.ron ./wasm-build/assets
     - name: Copy index.html
       run: cp ./assets/index.html ./wasm-build
     - name: Upload a Build Artifact

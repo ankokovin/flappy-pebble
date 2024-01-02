@@ -1,8 +1,9 @@
-use crate::consts::Consts;
+use crate::consts;
 use bevy::prelude::*;
 use rand::Rng;
 
 use crate::game_size::GameSize;
+use crate::gamepad_util::gamepad_pressed;
 use crate::state::gamestate::GameState;
 
 use super::moai::Moai;
@@ -48,7 +49,10 @@ impl Pebble {
     }
 }
 
-fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>, consts: Res<Consts>) {
+fn spawn_pebble(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
     let mut rng = rand::thread_rng();
 
     commands.spawn((
@@ -57,26 +61,30 @@ fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>, consts: 
             sprite: Sprite {
                 flip_x: true,
                 custom_size: Some(Vec2 {
-                    x: consts.pebble_width,
-                    y: consts.pebble_height,
+                    x: consts::PEBBLE_WIDTH,
+                    y: consts::PEBBLE_HEIGHT,
                 }),
                 ..Default::default()
             },
             ..Default::default()
         },
         Pebble::new(
-            rng.gen_range(consts.pebble_start_y_range.clone()),
-            consts.pebble_default_velocity,
+            rng.gen_range(consts::PEBBLE_START_Y_RANGE.clone()),
+            consts::PEBBLE_DEFAULT_VELOCITY,
         ),
         Name::new("Pebble"),
     ));
 }
 
-fn pebble_move(time: Res<Time<Fixed>>, mut pebble: Query<&mut Pebble>, consts: Res<Consts>) {
+fn pebble_move(
+    time: Res<Time<Fixed>>,
+    mut pebble: Query<&mut Pebble>,
+
+) {
     let mut pebble = pebble.get_single_mut().expect("to get a pebble");
     pebble.y += pebble.velocity * time.delta_seconds()
-        + consts.g_force_acceleration * time.delta_seconds() * time.delta_seconds() / 2.0;
-    pebble.velocity += consts.g_force_acceleration * time.delta_seconds();
+        + consts::G_FORCE_ACCELERATION * time.delta_seconds() * time.delta_seconds() / 2.0;
+    pebble.velocity += consts::G_FORCE_ACCELERATION * time.delta_seconds();
 }
 
 fn render_pebble(
@@ -91,10 +99,15 @@ fn render_pebble(
     transform.translation.y = pebble.y;
 }
 
-fn player_input(input: Res<Input<KeyCode>>, mut pebble: Query<&mut Pebble>, consts: Res<Consts>) {
-    if input.just_pressed(KeyCode::Space) {
+fn player_input(
+    keyboard_input: Res<Input<KeyCode>>,
+    gamepad_input: Res<Input<GamepadButton>>,
+    mut pebble: Query<&mut Pebble>,
+) {
+    if keyboard_input.just_pressed(KeyCode::Space) 
+        || gamepad_pressed(gamepad_input, GamepadButtonType::South) {
         let mut pebble = pebble.get_single_mut().expect("to get a pebble");
-        pebble.velocity = consts.pebble_default_velocity;
+        pebble.velocity = consts::PEBBLE_DEFAULT_VELOCITY;
     }
 }
 
@@ -114,21 +127,21 @@ fn check_collisions(
     query_pebble: Query<&Pebble>,
     query_moai: Query<&Moai>,
     mut game_state: ResMut<NextState<GameState>>,
-    consts: Res<Consts>,
+
 ) {
     let pebble = query_pebble.get_single().expect("to get a pebble");
     for moai in query_moai.iter() {
         let already_passed =
-            moai.x + consts.moai_width / 2.0 < pebble.x - consts.pebble_width / 2.0;
+            moai.x + consts::MOAI_WIDTH / 2.0 < pebble.x - consts::PEBBLE_WIDTH / 2.0;
         let not_reached_yet =
-            moai.x - consts.moai_width / 2.0 > pebble.x + consts.pebble_width / 2.0;
+            moai.x - consts::MOAI_WIDTH / 2.0 > pebble.x + consts::PEBBLE_WIDTH / 2.0;
         if not_reached_yet || already_passed {
             continue;
         }
 
-        let collided_down = moai.height > pebble.y - consts.pebble_height / 2.0;
-        let up_moai_start_y = moai.height + consts.moai_vertical_distance;
-        let collided_up = up_moai_start_y < pebble.y + consts.pebble_height / 2.0;
+        let collided_down = moai.height > pebble.y - consts::PEBBLE_HEIGHT / 2.0;
+        let up_moai_start_y = moai.height + consts::MOAI_VERTICAL_DISTANCE;
+        let collided_up = up_moai_start_y < pebble.y + consts::PEBBLE_HEIGHT / 2.0;
 
         if collided_down || collided_up {
             game_state.set(GameState::GameOver);

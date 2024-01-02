@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use rand::Rng;
 
-use crate::consts::Consts;
-use crate::{game_size::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
+use crate::{consts, game_size::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
 
 pub struct MoaiPlugin;
 
@@ -15,7 +14,7 @@ impl Plugin for MoaiPlugin {
                 (despawn_all_moai, spawn_init_moai).chain(),
             )
             .add_systems(OnEnter(GameState::MainMenu), despawn_all_moai)
-            .add_systems(Update, render_moai)
+            .add_systems(Update, render_moai.run_if(in_state(GameState::Playing)))
             .add_systems(
                 Update,
                 (despawn_moai_outside_screen).run_if(in_state(GameState::Playing)),
@@ -47,14 +46,19 @@ fn load_texture(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(MoaiTexture::new(moai_texture));
 }
 
-fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, consts: Res<Consts>, x: f32) {
+fn spawn_moai(
+    mut commands: Commands,
+    moai_texture: Res<MoaiTexture>,
+    x: f32
+) {
     let mut rng = rand::thread_rng();
+
     commands
         .spawn((
             SpatialBundle::default(),
             Moai {
                 x,
-                height: rng.gen_range(consts.moai_height_range.clone()),
+                height: rng.gen_range(consts::MOAI_HEIGHT_RANGE.clone()),
             },
             Name::new("Moai"),
         ))
@@ -64,8 +68,8 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, consts: Re
                 texture: moai_texture.handle.clone(),
                 sprite: Sprite {
                     custom_size: Some(Vec2 {
-                        x: consts.moai_width,
-                        y: consts.moai_height,
+                        x: consts::MOAI_WIDTH,
+                        y: consts::MOAI_HEIGHT,
                     }),
                     ..Default::default()
                 },
@@ -77,8 +81,8 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, consts: Re
                 texture: moai_texture.handle.clone(),
                 sprite: Sprite {
                     custom_size: Some(Vec2 {
-                        x: consts.moai_width,
-                        y: consts.moai_height,
+                        x: consts::MOAI_WIDTH,
+                        y: consts::MOAI_HEIGHT,
                     }),
                     flip_x: true,
                     flip_y: true,
@@ -86,7 +90,7 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, consts: Re
                 },
                 transform: Transform::from_translation(Vec3 {
                     x: 0.0,
-                    y: consts.moai_height + consts.moai_vertical_distance,
+                    y: consts::MOAI_HEIGHT + consts::MOAI_VERTICAL_DISTANCE,
                     z: 0.0,
                 }),
                 ..Default::default()
@@ -98,17 +102,16 @@ fn spawn_init_moai(
     commands: Commands,
     game_size: Res<GameSize>,
     moai_texture: Res<MoaiTexture>,
-    consts: Res<Consts>,
 ) {
     let mut x = if game_size.max_x < game_size.max_y {
         game_size.max_x
     } else {
         game_size.max_y
     } * 3.0;
-    if x < game_size.max_x + consts.moai_width {
-        x = game_size.max_x + consts.moai_width;
+    if x < game_size.max_x + consts::MOAI_WIDTH {
+        x = game_size.max_x + consts::MOAI_WIDTH;
     }
-    spawn_moai(commands, moai_texture, consts, x)
+    spawn_moai(commands, moai_texture, x)
 }
 
 fn despawn_all_moai(mut commands: Commands, query_all_moai: Query<Entity, With<Moai>>) {
@@ -117,10 +120,10 @@ fn despawn_all_moai(mut commands: Commands, query_all_moai: Query<Entity, With<M
     }
 }
 
-fn render_moai(mut query_all_moai: Query<(&Moai, &mut Transform)>, consts: Res<Consts>) {
+fn render_moai(mut query_all_moai: Query<(&Moai, &mut Transform)>, ) {
     for (moai, mut transform) in query_all_moai.iter_mut() {
         transform.translation.x = moai.x;
-        transform.translation.y = moai.height - consts.moai_height / 2.0;
+        transform.translation.y = moai.height - consts::MOAI_HEIGHT / 2.0;
     }
 }
 
@@ -130,13 +133,12 @@ fn move_moai(
     commands: Commands,
     game_size: Res<GameSize>,
     moai_texture: Res<MoaiTexture>,
-    consts: Res<Consts>,
     mut game_score: ResMut<GameScore>,
 ) {
     let mut max_x = f32::MIN;
     for mut moai in query_all_moai.iter_mut() {
         let before = moai.x;
-        let after = before - consts.moai_move_speed * time.delta_seconds();
+        let after = before - consts::MOAI_MOVE_SPEED * time.delta_seconds();
 
         if before >= 0.0 && after <= 0.0 {
             game_score.inc_score();
@@ -148,20 +150,19 @@ fn move_moai(
         }
     }
 
-    if game_size.max_x + consts.moai_width - max_x >= consts.moai_horizontal_distance {
-        let x = game_size.max_x + consts.moai_width;
-        spawn_moai(commands, moai_texture, consts, x);
+    if game_size.max_x + consts::MOAI_WIDTH - max_x >= consts::MOAI_HORIZONTAL_DISTANCE {
+        let x = game_size.max_x + consts::MOAI_WIDTH;
+        spawn_moai(commands, moai_texture, x);
     }
 }
 
 fn despawn_moai_outside_screen(
     mut commands: Commands,
     game_size: Res<GameSize>,
-    consts: Res<Consts>,
     query_all_moai: Query<(Entity, &Moai)>,
 ) {
     for (entity, moai) in query_all_moai.iter() {
-        if moai.x < game_size.min_x - consts.moai_width {
+        if moai.x < game_size.min_x - consts::MOAI_WIDTH {
             commands.entity(entity).despawn_recursive();
         }
     }
