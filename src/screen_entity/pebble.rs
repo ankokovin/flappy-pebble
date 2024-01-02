@@ -1,10 +1,14 @@
+use crate::consts::{
+    G_FORCE_ACCELERATION, MOAI_VERTICAL_DISTANCE, MOAI_WIDTH, PEBBLE_DEFAULT_VELOCITY,
+    PEBBLE_HEIGHT, PEBBLE_START_Y_RANGE, PEBBLE_WIDTH,
+};
 use bevy::prelude::*;
 use rand::Rng;
 
 use crate::gamesize::GameSize;
 use crate::state::gamestate::GameState;
 
-use super::moai::{Moai, MOAI_VERTICAL_DISTANCE, MOAI_WIDTH};
+use super::moai::Moai;
 
 #[derive(Debug, Default)]
 pub struct PebblePlugin;
@@ -33,8 +37,6 @@ pub struct Pebble {
     y: f32,
 }
 
-const PEBBLE_DEFAULT_VELOCITY: f32 = 400.0;
-
 impl Pebble {
     fn new(y: f32) -> Pebble {
         Pebble {
@@ -44,11 +46,6 @@ impl Pebble {
         }
     }
 }
-
-const PEBBLE_WIDTH: f32 = 90.0;
-const PEBBLE_HEIGHT: f32 = 52.0;
-
-const PEBBLE_START_Y_RANGE: std::ops::Range<f32> = -300.0..300.0;
 
 fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut rng = rand::thread_rng();
@@ -70,8 +67,6 @@ fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
         Name::new("Pebble"),
     ));
 }
-
-const G_FORCE_ACCELERATION: f32 = -400.0;
 
 fn pebble_move(time: Res<Time<Fixed>>, mut pebble: Query<&mut Pebble>) {
     let mut pebble = pebble.get_single_mut().expect("to get a pebble");

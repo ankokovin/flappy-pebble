@@ -1,12 +1,16 @@
 use bevy::prelude::*;
 use rand::Rng;
 
+use crate::consts::{
+    MOAI_HEIGHT, MOAI_HEIGHT_RANGE, MOAI_HORIZONTAL_DISTANCE, MOAI_MOVE_SPEED,
+    MOAI_VERTICAL_DISTANCE, MOAI_WIDTH,
+};
 use crate::{gamesize::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
 
 pub struct MoaiPlugin;
 
 impl Plugin for MoaiPlugin {
-    fn build(&self, app: &mut bevy::prelude::App) {
+    fn build(&self, app: &mut App) {
         app.register_type::<Moai>()
             .add_systems(Startup, load_texture)
             .add_systems(
@@ -28,9 +32,6 @@ pub struct Moai {
     pub height: f32,
 }
 
-pub const MOAI_WIDTH: f32 = 100.0;
-const MOAI_HEIGHT: f32 = 1345.0;
-
 #[derive(Resource)]
 struct MoaiTexture {
     //TODO: separate head and body sections for better modularity
@@ -47,10 +48,6 @@ fn load_texture(mut commands: Commands, asset_server: Res<AssetServer>) {
     let moai_texture = asset_server.load("moai.png");
     commands.insert_resource(MoaiTexture::new(moai_texture));
 }
-
-pub const MOAI_VERTICAL_DISTANCE: f32 = 300.0;
-
-const MOAI_HEIGHT_RANGE: std::ops::Range<f32> = -200.0..200.0;
 
 fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
     let mut rng = rand::thread_rng();
@@ -116,10 +113,6 @@ fn render_moai(mut query_all_moai: Query<(&Moai, &mut Transform)>) {
         transform.translation.y = moai.height - MOAI_HEIGHT / 2.0;
     }
 }
-
-const MOAI_MOVE_SPEED: f32 = 200.0;
-
-const MOAI_HORIZONTAL_DISTANCE: f32 = 400.0;
 
 fn move_moai(
     time: Res<Time<Fixed>>,
