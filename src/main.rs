@@ -4,31 +4,43 @@ mod screen_entity;
 mod state;
 mod ui;
 
-use bevy::{prelude::*, window::WindowResolution};
+use bevy::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+
+
+
+#[cfg(target_family = "wasm")]
+fn get_window(_window_name: &str, _width: f32, _height: f32) -> Window {
+    Window {
+        fit_canvas_to_parent: true,
+        ..default()
+    }
+}
+
+#[cfg(not(target_family = "wasm"))]
 fn get_window(window_name: &str, width: f32, height: f32) -> Window {
     Window {
         title: window_name.to_string(),
-        resizable: false,
-        resolution: WindowResolution::new(width, height),
+        resizable: true,
+        resolution: bevy::window::WindowResolution::new(width, height),
         ..Default::default()
     }
 }
 
 fn main() {
-    let height = consts::WINDOW_HEIGHT;
-    let width = consts::WINDOW_WIDTH;
+    let default_height = consts::WINDOW_HEIGHT;
+    let default_width = consts::WINDOW_WIDTH;
     let window_name = consts::WINDOW_NAME;
     let mut app = App::new();
-    app.insert_resource(gamesize::GameSize::new(width, height))
-        .add_plugins((
-            DefaultPlugins.set(WindowPlugin {
-                primary_window: Some(get_window(window_name, width, height)),
+    app.add_plugins((
+        DefaultPlugins.set(WindowPlugin {
+                primary_window: Some(get_window(window_name, default_width, default_height)),
                 ..Default::default()
             }),
-            state::StatePlugin,
-            screen_entity::GameEntityPlugin,
-            ui::UiPlugin,
+        gamesize::GameSizeChangePlugin::new(default_width, default_height),
+        state::StatePlugin,
+        screen_entity::GameEntityPlugin,
+        ui::UiPlugin,
         ))
         .add_systems(Startup, spawn_camera);
 
