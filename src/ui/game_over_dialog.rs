@@ -59,7 +59,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                 ),
                 Name::new("GameScoreLabel"),
             ));
-            if game_score.is_new_highscore() {
+            if game_score.is_new_high_score() {
                 parent.spawn((
                     TextBundle::from_section(
                         "New high score!",
