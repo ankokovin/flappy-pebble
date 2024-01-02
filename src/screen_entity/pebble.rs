@@ -25,7 +25,7 @@ impl Plugin for PebblePlugin {
             )
             .add_systems(
                 Update,
-                render_pebble.run_if(not(in_state(GameState::MainMenu))),
+                render_pebble.run_if(in_state(GameState::Playing)),
             )
             .add_systems(Update, player_input.run_if(in_state(GameState::Playing)));
     }
