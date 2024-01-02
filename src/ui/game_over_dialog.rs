@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{gamescore::GameScore, gamestate::GameState};
+use crate::state::{gamescore::GameScore, gamestate::GameState};
 
 pub struct GameOverDialogPlugin;
 

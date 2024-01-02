@@ -1,8 +1,9 @@
 use bevy::prelude::*;
 
 use crate::gamesize::GameSize;
-use crate::gamestate::GameState;
-use crate::moai::{Moai, MOAI_VERTICAL_DISTANCE, MOAI_WIDTH};
+use crate::state::gamestate::GameState;
+
+use super::moai::{Moai, MOAI_VERTICAL_DISTANCE, MOAI_WIDTH};
 
 #[derive(Debug, Default)]
 pub struct PebblePlugin;

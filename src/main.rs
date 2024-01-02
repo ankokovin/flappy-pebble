@@ -1,21 +1,16 @@
-mod gamescore;
 mod gamesize;
-mod gamestate;
-mod moai;
-mod pebble;
+mod screen_entity;
+mod state;
 mod ui;
 
 use bevy::{prelude::*, window::WindowResolution};
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
-use gamesize::GameSize;
-use gamestate::GameState;
 
 fn main() {
     let height = 1024.0;
     let width = 512.0;
     let mut app = App::new();
-    app.add_state::<GameState>()
-        .insert_resource(GameSize::new(width, height))
+    app.insert_resource(gamesize::GameSize::new(width, height))
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
@@ -26,9 +21,8 @@ fn main() {
                 }),
                 ..Default::default()
             }),
-            pebble::PebblePlugin,
-            moai::MoaiPlugin,
-            gamescore::GameScorePlugin,
+            state::StatePlugin,
+            screen_entity::GameEntityPlugin,
             ui::UiPlugin,
         ))
         .add_systems(Startup, spawn_camera);

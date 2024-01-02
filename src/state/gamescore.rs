@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::gamestate::GameState;
+use super::gamestate::GameState;
 
 type Score = u32;
 

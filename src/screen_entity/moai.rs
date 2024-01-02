@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{gamescore::GameScore, gamesize::GameSize, gamestate::GameState};
+use crate::{gamesize::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
 
 pub struct MoaiPlugin;
 
