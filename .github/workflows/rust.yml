@@ -38,9 +38,8 @@ jobs:
     - name: Copy index.html
       run: cp ./assets/index.html ./wasm-build
     - name: Upload a Build Artifact
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v2
       with:
-        name: wasm-build
         path: wasm-build
 
   publish-pages:
@@ -48,6 +47,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Deploy GitHub Pages site
-      uses: actions/deploy-pages@v4.0.2
-      with:
-        artifact_name: wasm-build
+      uses: actions/deploy-pages@v2
