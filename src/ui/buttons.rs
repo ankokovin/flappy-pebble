@@ -12,7 +12,13 @@ pub trait ChangeStateButton where Self: Component + Sized {
     fn target_state() -> GameState;
 
     fn interaction_system(interaction_query: Query<&Interaction, (Changed<Interaction>, With<Self>)>,
-                          next_state: ResMut<NextState<GameState>>);
+                          mut next_state: ResMut<NextState<GameState>>) {
+        for interaction in interaction_query.iter() {
+            if *interaction == Interaction::Pressed {
+                next_state.set(Self::target_state());
+            }
+        }
+    }
 }
 
 pub fn change_state_button<T>(

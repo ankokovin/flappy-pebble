@@ -17,9 +17,6 @@ pub trait ChangeStateButton where Self: Component + Sized {
     fn should_change_state_keyboard(&self, input: Res<Input<KeyCode>>) -> bool;
 
     fn target_state() -> GameState;
-
-    fn interaction_system(interaction_query: Query<&Interaction, (Changed<Interaction>, With<Self>)>,
-                          next_state: ResMut<NextState<GameState>>);
 }
 
 #[derive(ChangeStateButton, Component)]

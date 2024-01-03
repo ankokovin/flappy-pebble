@@ -82,15 +82,6 @@ pub fn button(input: TokenStream) -> TokenStream {
             fn target_state() -> GameState {
                 GameState::#target_state
             }
-
-             fn interaction_system(interaction_query: Query<&Interaction, (Changed<Interaction>, With<Self>)>,
-                          mut next_state: ResMut<NextState<GameState>>) {
-                 for interaction in interaction_query.iter() {
-                    if *interaction == Interaction::Pressed {
-                        next_state.set(GameState::#target_state);
-                    }
-                }
-            }
         }
     };
 
