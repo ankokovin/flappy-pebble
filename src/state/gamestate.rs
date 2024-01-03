@@ -6,6 +6,7 @@ pub enum GameState {
     MainMenu,
     Playing,
     GameOver,
+    Pause,
     Exit,
 }
 

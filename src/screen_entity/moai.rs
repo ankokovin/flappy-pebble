@@ -12,9 +12,17 @@ impl Plugin for MoaiPlugin {
         app.register_type::<Moai>()
             .add_systems(Startup, load_texture)
             .add_systems(
-                OnEnter(GameState::Playing),
-                (despawn_all_moai, spawn_init_moai).chain(),
-            )
+                OnTransition {
+                    from: GameState::MainMenu,
+                    to: GameState::Playing,
+                },
+                (despawn_all_moai, spawn_init_moai).chain())
+            .add_systems(
+                OnTransition {
+                    from: GameState::GameOver,
+                    to: GameState::Playing,
+                },
+                (despawn_all_moai, spawn_init_moai).chain())
             .add_systems(OnEnter(GameState::MainMenu), despawn_all_moai)
             .add_systems(Update, render_moai.run_if(in_state(GameState::Playing)))
             .add_systems(

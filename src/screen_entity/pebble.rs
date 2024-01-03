@@ -16,7 +16,17 @@ impl Plugin for PebblePlugin {
     fn build(&self, app: &mut App) {
         app.register_type::<Pebble>()
             .add_systems(
-                OnEnter(GameState::Playing),
+                OnTransition {
+                    from: GameState::MainMenu,
+                    to: GameState::Playing,
+                },
+                (despawn_pebble, spawn_pebble).chain(),
+            )
+            .add_systems(
+                OnTransition {
+                    from: GameState::GameOver,
+                    to: GameState::Playing,
+                },
                 (despawn_pebble, spawn_pebble).chain(),
             )
             .add_systems(OnEnter(GameState::MainMenu), despawn_pebble)

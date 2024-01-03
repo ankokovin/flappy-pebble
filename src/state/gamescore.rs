@@ -41,7 +41,14 @@ pub struct GameScorePlugin;
 impl Plugin for GameScorePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<GameScore>()
-            .add_systems(OnEnter(GameState::Playing), reset_score);
+            .add_systems(OnTransition {
+                from: GameState::MainMenu,
+                to: GameState::Playing,
+            }, reset_score)
+            .add_systems(OnTransition {
+            from: GameState::GameOver,
+            to: GameState::Playing,
+        }, reset_score);
     }
 }
 

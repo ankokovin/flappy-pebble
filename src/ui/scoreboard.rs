@@ -6,12 +6,26 @@ pub struct ScoreBoardPlugin;
 
 impl Plugin for ScoreBoardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Playing), spawn_scoreboard)
-            .add_systems(OnExit(GameState::Playing), despawn_scoreboard)
-            .add_systems(
-                Update,
-                (update_scoreboard, update_is_highscore_label).run_if(in_state(GameState::Playing)),
-            );
+        app.add_systems(
+            OnTransition {
+                from: GameState::MainMenu,
+                to: GameState::Playing,
+            },
+            spawn_scoreboard,
+        )
+        .add_systems(
+            OnTransition {
+                from: GameState::GameOver,
+                to: GameState::Playing,
+            },
+            spawn_scoreboard,
+        )
+        .add_systems(OnEnter(GameState::MainMenu), despawn_scoreboard)
+        .add_systems(OnEnter(GameState::GameOver), despawn_scoreboard)
+        .add_systems(
+            Update,
+            (update_scoreboard, update_is_highscore_label).run_if(in_state(GameState::Playing)),
+        );
     }
 }
 
@@ -101,7 +115,12 @@ fn update_scoreboard(
     game_score: Res<GameScore>,
     mut query_score_label: Query<&mut Text, With<ScoreLabel>>,
 ) {
-    let mut text = query_score_label.single_mut();
+    let text = query_score_label.get_single_mut();
+    if let Err(error) = text {
+        debug!("{}", error);
+        return;
+    }
+    let mut text = text.unwrap();
     let section = text.sections.first_mut().expect("to have a TextSection");
     section.value = game_score.get_current().to_string();
 }
@@ -110,7 +129,12 @@ fn update_is_highscore_label(
     game_score: Res<GameScore>,
     mut query_is_highscore_label: Query<&mut Text, With<IsHighScoreLabel>>,
 ) {
-    let mut text = query_is_highscore_label.single_mut();
+    let text = query_is_highscore_label.get_single_mut();
+    if let Err(error) = text {
+        debug!("{}", error);
+        return;
+    }
+    let mut text = text.unwrap();
     let section = text.sections.first_mut().expect("to have a TextSection");
     section.value = (if game_score.is_new_high_score() {
         "Highscore!"
