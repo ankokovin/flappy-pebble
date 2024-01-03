@@ -2,11 +2,7 @@ name: Rust
 
 on:
   push:
-    branches: "main"
-    paths:
-      - '/src/**'
-      - '/assets/**'
-      - '.github/workflows/rust.yml'
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
