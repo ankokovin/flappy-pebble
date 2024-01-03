@@ -16,13 +16,15 @@ impl Plugin for MoaiPlugin {
                     from: GameState::MainMenu,
                     to: GameState::Playing,
                 },
-                (despawn_all_moai, spawn_init_moai).chain())
+                (despawn_all_moai, spawn_init_moai).chain(),
+            )
             .add_systems(
                 OnTransition {
                     from: GameState::GameOver,
                     to: GameState::Playing,
                 },
-                (despawn_all_moai, spawn_init_moai).chain())
+                (despawn_all_moai, spawn_init_moai).chain(),
+            )
             .add_systems(OnEnter(GameState::MainMenu), despawn_all_moai)
             .add_systems(Update, render_moai.run_if(in_state(GameState::Playing)))
             .add_systems(

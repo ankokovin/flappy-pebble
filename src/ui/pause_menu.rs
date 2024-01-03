@@ -52,7 +52,12 @@ fn spawn_game_pause_menu(mut commands: Commands) {
                     width: Val::Percent(100.0),
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
-                    padding: UiRect::new(Val::Px(50.0), Val::Px(50.0), Val::Px(100.0), Val::Px(50.0)),
+                    padding: UiRect::new(
+                        Val::Px(50.0),
+                        Val::Px(50.0),
+                        Val::Px(100.0),
+                        Val::Px(50.0),
+                    ),
                     ..Default::default()
                 },
                 ..default()
