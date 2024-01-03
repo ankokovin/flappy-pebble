@@ -101,10 +101,13 @@ fn render_pebble(
 
 fn player_input(
     keyboard_input: Res<Input<KeyCode>>,
+    mouse_input: Res<Input<MouseButton>>,
     gamepad_input: Res<Input<GamepadButton>>,
     mut pebble: Query<&mut Pebble>,
 ) {
-    if keyboard_input.just_pressed(KeyCode::Space) 
+
+    if keyboard_input.just_pressed(KeyCode::Space)
+        || mouse_input.just_pressed(MouseButton::Left)
         || gamepad_pressed(gamepad_input, GamepadButtonType::South) {
         let mut pebble = pebble.get_single_mut().expect("to get a pebble");
         pebble.velocity = consts::PEBBLE_DEFAULT_VELOCITY;
