@@ -7,11 +7,12 @@ use syn::punctuated::Punctuated;
 
 
 #[proc_macro_derive(
-ChangeStateButton, attributes(keyboard, target_state))]
+ChangeStateButton, attributes(keyboard, gamepad, target_state))]
 pub fn button(input: TokenStream) -> TokenStream {
     let decl = parse_macro_input!(input as DeriveInput);
 
     let mut key_codes = None;
+    let mut gamepad_buttons = None;
     let mut target_state = None;
 
     let mut error = None;
@@ -33,6 +34,22 @@ pub fn button(input: TokenStream) -> TokenStream {
                 }
 
                 key_codes = Some(result.unwrap());
+            },
+            Meta::List(list) if list.path.is_ident("gamepad") => {
+                let result = list.parse_args_with(Punctuated::<Ident, Token![,]>::parse_terminated);
+                if result.is_err() {
+                    error = Some(syn::Error::new(
+                        list.span(),
+                        indoc! {r#"
+                                The `gamepad` attribute expects idents to be comma separated
+
+                                = help: use `#[gamepad(South, Home)]`
+                            "#}
+                    ));
+                    continue;
+                }
+
+                gamepad_buttons = Some(result.unwrap());
             },
             Meta::List(list) if list.path.is_ident("target_state") => {
                 let result: syn::Result<Ident> = list.parse_args();
@@ -65,8 +82,12 @@ pub fn button(input: TokenStream) -> TokenStream {
 
     let struct_name = decl.ident;
     let name = struct_name.to_string();
+
     let key_codes = key_codes.unwrap_or_default();
     let key_codes: Vec<_> = key_codes.iter().collect();
+
+    let gamepad_buttons = gamepad_buttons.unwrap_or_default();
+    let gamepad_buttons: Vec<_> = gamepad_buttons.iter().collect();
 
 
     let expanded = quote! {
@@ -77,6 +98,10 @@ pub fn button(input: TokenStream) -> TokenStream {
 
             fn should_change_state_keyboard(input: Res<Input<KeyCode>>) -> bool {
                 input.any_just_pressed(vec![#(KeyCode::#key_codes,)*])
+            }
+
+            fn should_change_state_gamepad(input: Res<Input<GamepadButton>>) -> bool {
+                input.get_just_pressed().any(|press| vec![#(GamepadButtonType::#gamepad_buttons,)*].contains(&press.button_type))
             }
 
             fn target_state() -> GameState {

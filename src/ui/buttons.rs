@@ -9,6 +9,8 @@ pub trait ChangeStateButton where Self: Component + Sized {
 
     fn should_change_state_keyboard(input: Res<Input<KeyCode>>) -> bool;
 
+    fn should_change_state_gamepad(input: Res<Input<GamepadButton>>) -> bool;
+
     fn target_state() -> GameState;
 
     fn button_pressed_system(interaction_query: Query<&Interaction, (Changed<Interaction>, With<Self>)>,
@@ -22,7 +24,13 @@ pub trait ChangeStateButton where Self: Component + Sized {
 
     fn keyboard_pressed_system(input: Res<Input<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
         if Self::should_change_state_keyboard(input) {
-            next_state.set(Self::target_state())
+            next_state.set(Self::target_state());
+        }
+    }
+
+    fn gamepad_button_pressed_system(input: Res<Input<GamepadButton>>, mut next_state: ResMut<NextState<GameState>>) {
+        if Self::should_change_state_gamepad(input) {
+            next_state.set(Self::target_state());
         }
     }
 }

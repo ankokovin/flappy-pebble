@@ -9,13 +9,18 @@ fn update_systems() -> impl IntoSystemConfigs<()> {
     (
         StartGameButton::button_pressed_system,
         StartGameButton::keyboard_pressed_system,
-        ExitButton::button_pressed_system
+        StartGameButton::gamepad_button_pressed_system,
+        ExitButton::button_pressed_system,
     ).run_if(in_state(GameState::MainMenu))
 }
 
 #[cfg(target_family = "wasm")]
 fn update_systems() -> impl IntoSystemConfigs<()> {
-    (StartGameButton::button_pressed_system, StartGameButton::keyboard_pressed_system)
+    (
+        StartGameButton::button_pressed_system,
+        StartGameButton::keyboard_pressed_system,
+        StartGameButton::gamepad_button_pressed_system,
+    )
     .run_if(in_state(GameState::MainMenu))
 }
 
@@ -32,6 +37,8 @@ struct MainMenu;
 
 #[derive(Debug, Component, ChangeStateButton)]
 #[target_state(Playing)]
+#[keyboard(Return)]
+#[gamepad(South)]
 struct StartGameButton;
 
 

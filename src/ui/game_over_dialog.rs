@@ -13,8 +13,10 @@ impl Plugin for GameOverDialogPlugin {
                 (
                     RestartButton::button_pressed_system,
                     RestartButton::keyboard_pressed_system,
+                    RestartButton::gamepad_button_pressed_system,
                     MainMenuButton::button_pressed_system,
                     MainMenuButton::keyboard_pressed_system,
+                    MainMenuButton::gamepad_button_pressed_system,
                 )
                     .run_if(in_state(GameState::GameOver)),
             )
@@ -25,11 +27,13 @@ impl Plugin for GameOverDialogPlugin {
 #[derive(Component, ChangeStateButton)]
 #[keyboard(Return, Space)]
 #[target_state(Playing)]
+#[gamepad(South)]
 struct RestartButton;
 
 #[derive(Component, ChangeStateButton)]
 #[keyboard(Escape)]
 #[target_state(MainMenu)]
+#[gamepad(East)]
 struct MainMenuButton;
 
 #[derive(Component)]
