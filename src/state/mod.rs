@@ -1,5 +1,6 @@
 pub mod gamescore;
 pub mod gamestate;
+mod input_mode;
 
 pub struct StatePlugin;
 

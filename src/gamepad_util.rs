@@ -1,3 +1,4 @@
+use std::hash::Hash;
 use bevy::input::Input;
 use bevy::prelude::{GamepadButton, GamepadButtonType, Res};
 
@@ -7,4 +8,9 @@ pub fn gamepad_pressed(
     button: GamepadButtonType) -> bool {
     gamepad_input.get_just_pressed()
         .any(|press| press.button_type == button)
+}
+
+pub fn gamepad_just_pressed(button: GamepadButtonType) -> impl FnMut(Res<Input<GamepadButton>>) -> bool + Clone
+{
+    move |inputs: Res<Input<GamepadButton>>| gamepad_pressed(inputs, button)
 }

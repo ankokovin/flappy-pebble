@@ -1,9 +1,11 @@
+use std::hash::Hash;
+use bevy::input::common_conditions::input_just_pressed;
 use crate::consts;
 use bevy::prelude::*;
 use rand::Rng;
 
 use crate::game_size::GameSize;
-use crate::gamepad_util::gamepad_pressed;
+use crate::gamepad_util::gamepad_just_pressed;
 use crate::state::gamestate::GameState;
 
 use super::moai::Moai;
@@ -28,7 +30,11 @@ impl Plugin for PebblePlugin {
                 Update,
                 render_pebble.run_if(in_state(GameState::Playing)),
             )
-            .add_systems(Update, player_input.run_if(in_state(GameState::Playing)));
+            .add_systems(Update, reset_pebble_velocity.run_if(
+                in_state(GameState::Playing)
+                    .and_then(input_just_pressed(MouseButton::Left)
+                        .or_else(input_just_pressed(KeyCode::Space))
+                        .or_else(gamepad_just_pressed(GamepadButtonType::South)))));
     }
 }
 
@@ -99,20 +105,13 @@ fn render_pebble(
     transform.translation.y = pebble.y;
 }
 
-fn player_input(
-    keyboard_input: Res<Input<KeyCode>>,
-    mouse_input: Res<Input<MouseButton>>,
-    gamepad_input: Res<Input<GamepadButton>>,
+fn reset_pebble_velocity(
     mut pebble: Query<&mut Pebble>,
 ) {
-
-    if keyboard_input.just_pressed(KeyCode::Space)
-        || mouse_input.just_pressed(MouseButton::Left)
-        || gamepad_pressed(gamepad_input, GamepadButtonType::South) {
-        let mut pebble = pebble.get_single_mut().expect("to get a pebble");
-        pebble.velocity = consts::PEBBLE_DEFAULT_VELOCITY;
-    }
+    let mut pebble = pebble.get_single_mut().expect("to get a pebble");
+    pebble.velocity = consts::PEBBLE_DEFAULT_VELOCITY;
 }
+
 
 fn check_death_down(
     query_pebble: Query<&Pebble>,
