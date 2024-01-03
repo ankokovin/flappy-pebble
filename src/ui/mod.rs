@@ -1,4 +1,5 @@
 mod buttons;
+mod fullscreen;
 mod game_over_dialog;
 mod main_menu;
 mod pause_menu;
@@ -13,5 +14,6 @@ impl bevy::app::PluginGroup for UiPlugin {
             .add(scoreboard::ScoreBoardPlugin)
             .add(main_menu::MainMenuPlugin)
             .add(pause_menu::PauseMenuPlugin)
+            .add(fullscreen::FullScreenPlugin)
     }
 }
