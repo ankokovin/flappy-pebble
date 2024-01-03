@@ -75,7 +75,7 @@ pub fn button(input: TokenStream) -> TokenStream {
                 #name.to_string()
             }
 
-            fn should_change_state_keyboard(&self, input: Res<Input<KeyCode>>) -> bool {
+            fn should_change_state_keyboard(input: Res<Input<KeyCode>>) -> bool {
                 input.any_just_pressed(vec![#(KeyCode::#key_codes,)*])
             }
 

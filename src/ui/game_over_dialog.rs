@@ -11,9 +11,10 @@ impl Plugin for GameOverDialogPlugin {
             .add_systems(
                 Update,
                 (
-                    RestartButton::interaction_system,
-                    MainMenuButton::interaction_system,
-                    player_input,
+                    RestartButton::button_pressed_system,
+                    RestartButton::keyboard_pressed_system,
+                    MainMenuButton::button_pressed_system,
+                    MainMenuButton::keyboard_pressed_system,
                 )
                     .run_if(in_state(GameState::GameOver)),
             )
@@ -153,15 +154,5 @@ fn despawn_game_over_dialog(
 ) {
     for dialog in dialog_query.iter() {
         commands.entity(dialog).despawn_recursive();
-    }
-}
-
-fn player_input(input: Res<Input<KeyCode>>, mut next_state: ResMut<NextState<GameState>>) {
-    if input.any_just_pressed(vec![KeyCode::Space, KeyCode::Return]) {
-        next_state.set(GameState::Playing);
-    }
-
-    if input.just_pressed(KeyCode::Escape) {
-        next_state.set(GameState::MainMenu);
     }
 }

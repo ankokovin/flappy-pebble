@@ -11,11 +11,11 @@ pub enum GameState {
 }
 
 pub trait ChangeStateButton where Self: Component + Sized {
-
     fn name(&self) -> String;
 
     fn should_change_state_keyboard(&self, input: Res<Input<KeyCode>>) -> bool;
 
+    fn should_change_state_keyboard(input: Res<Input<KeyCode>>) -> bool;
     fn target_state() -> GameState;
 }
 
