@@ -1,6 +1,6 @@
 use crate::state::gamestate::GameState;
+use crate::ui::buttons::{change_state_button, ChangeStateButton, DEFAULT_BUTTON_COLOR};
 use bevy::prelude::*;
-use crate::ui::buttons::{DEFAULT_BUTTON_COLOR, ChangeStateButton, change_state_button};
 
 pub struct MainMenuPlugin;
 
@@ -11,7 +11,8 @@ fn update_systems() -> impl IntoSystemConfigs<()> {
         StartGameButton::keyboard_pressed_system,
         StartGameButton::gamepad_button_pressed_system,
         ExitButton::button_pressed_system,
-    ).run_if(in_state(GameState::MainMenu))
+    )
+        .run_if(in_state(GameState::MainMenu))
 }
 
 #[cfg(target_family = "wasm")]
@@ -21,7 +22,7 @@ fn update_systems() -> impl IntoSystemConfigs<()> {
         StartGameButton::keyboard_pressed_system,
         StartGameButton::gamepad_button_pressed_system,
     )
-    .run_if(in_state(GameState::MainMenu))
+        .run_if(in_state(GameState::MainMenu))
 }
 
 impl Plugin for MainMenuPlugin {
@@ -40,7 +41,6 @@ struct MainMenu;
 #[keyboard(Return)]
 #[gamepad(South)]
 struct StartGameButton;
-
 
 #[derive(Debug, Component, ChangeStateButton)]
 #[target_state(Exit)]
@@ -100,7 +100,9 @@ fn spawn_main_menu(mut commands: Commands) {
                                     ..default()
                                 },
                                 ..default()
-                            }, StartGameButton))
+                            },
+                            StartGameButton,
+                        ))
                         .with_children(|parent| {
                             parent.spawn((
                                 TextBundle::from_section(
@@ -115,7 +117,8 @@ fn spawn_main_menu(mut commands: Commands) {
                         });
 
                     if !cfg!(target_family = "wasm") {
-                        parent.spawn(change_state_button(
+                        parent
+                            .spawn(change_state_button(
                                 ButtonBundle {
                                     background_color: DEFAULT_BUTTON_COLOR.into(),
                                     style: Style {
@@ -124,7 +127,8 @@ fn spawn_main_menu(mut commands: Commands) {
                                     },
                                     ..default()
                                 },
-                                ExitButton))
+                                ExitButton,
+                            ))
                             .with_children(|parent| {
                                 parent.spawn((
                                     TextBundle::from_section(

@@ -1,6 +1,5 @@
-
-use bevy::input::common_conditions::input_just_pressed;
 use crate::consts;
+use bevy::input::common_conditions::input_just_pressed;
 use bevy::prelude::*;
 use rand::Rng;
 
@@ -26,15 +25,17 @@ impl Plugin for PebblePlugin {
                 (pebble_move, check_death_down, check_collisions)
                     .run_if(in_state(GameState::Playing)),
             )
+            .add_systems(Update, render_pebble.run_if(in_state(GameState::Playing)))
             .add_systems(
                 Update,
-                render_pebble.run_if(in_state(GameState::Playing)),
-            )
-            .add_systems(Update, reset_pebble_velocity.run_if(
-                in_state(GameState::Playing)
-                    .and_then(input_just_pressed(MouseButton::Left)
-                        .or_else(input_just_pressed(KeyCode::Space))
-                        .or_else(gamepad_just_pressed(GamepadButtonType::South)))));
+                reset_pebble_velocity.run_if(
+                    in_state(GameState::Playing).and_then(
+                        input_just_pressed(MouseButton::Left)
+                            .or_else(input_just_pressed(KeyCode::Space))
+                            .or_else(gamepad_just_pressed(GamepadButtonType::South)),
+                    ),
+                ),
+            );
     }
 }
 
@@ -55,10 +56,7 @@ impl Pebble {
     }
 }
 
-fn spawn_pebble(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
+fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut rng = rand::thread_rng();
 
     commands.spawn((
@@ -82,11 +80,7 @@ fn spawn_pebble(
     ));
 }
 
-fn pebble_move(
-    time: Res<Time<Fixed>>,
-    mut pebble: Query<&mut Pebble>,
-
-) {
+fn pebble_move(time: Res<Time<Fixed>>, mut pebble: Query<&mut Pebble>) {
     let mut pebble = pebble.get_single_mut().expect("to get a pebble");
     pebble.y += pebble.velocity * time.delta_seconds()
         + consts::G_FORCE_ACCELERATION * time.delta_seconds() * time.delta_seconds() / 2.0;
@@ -105,13 +99,10 @@ fn render_pebble(
     transform.translation.y = pebble.y;
 }
 
-fn reset_pebble_velocity(
-    mut pebble: Query<&mut Pebble>,
-) {
+fn reset_pebble_velocity(mut pebble: Query<&mut Pebble>) {
     let mut pebble = pebble.get_single_mut().expect("to get a pebble");
     pebble.velocity = consts::PEBBLE_DEFAULT_VELOCITY;
 }
-
 
 fn check_death_down(
     query_pebble: Query<&Pebble>,
@@ -129,7 +120,6 @@ fn check_collisions(
     query_pebble: Query<&Pebble>,
     query_moai: Query<&Moai>,
     mut game_state: ResMut<NextState<GameState>>,
-
 ) {
     let pebble = query_pebble.get_single().expect("to get a pebble");
     for moai in query_moai.iter() {

@@ -10,7 +10,10 @@ pub enum GameState {
     GameOver,
 }
 
-pub trait ChangeStateButton where Self: Component + Sized {
+pub trait ChangeStateButton
+where
+    Self: Component + Sized,
+{
     fn name(&self) -> String;
     fn should_change_state_keyboard(input: Res<Input<KeyCode>>) -> bool;
     fn should_change_state_gamepad(input: Res<Input<GamepadButton>>) -> bool;
@@ -29,11 +32,9 @@ struct Button;
 #[gamepad(North)]
 struct AnotherButton;
 
-
 #[derive(ChangeStateButton, Component)]
 #[target_state(GameOver)]
 #[gamepad(East)]
 struct FinalButton;
-
 
 fn main() {}

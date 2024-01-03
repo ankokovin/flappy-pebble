@@ -1,13 +1,11 @@
-use proc_macro::*;
 use indoc::indoc;
+use proc_macro::*;
 use quote::quote;
-use syn::{DeriveInput, Meta, Token, parse_macro_input, Ident};
-use syn::spanned::Spanned;
 use syn::punctuated::Punctuated;
+use syn::spanned::Spanned;
+use syn::{parse_macro_input, DeriveInput, Ident, Meta, Token};
 
-
-#[proc_macro_derive(
-ChangeStateButton, attributes(keyboard, gamepad, target_state))]
+#[proc_macro_derive(ChangeStateButton, attributes(keyboard, gamepad, target_state))]
 pub fn button(input: TokenStream) -> TokenStream {
     let decl = parse_macro_input!(input as DeriveInput);
 
@@ -28,13 +26,13 @@ pub fn button(input: TokenStream) -> TokenStream {
                                 The `keyboard` attribute expects idents to be comma separated
 
                                 = help: use `#[keyboard(Space, Return)]`
-                            "#}
+                            "#},
                     ));
                     continue;
                 }
 
                 key_codes = Some(result.unwrap());
-            },
+            }
             Meta::List(list) if list.path.is_ident("gamepad") => {
                 let result = list.parse_args_with(Punctuated::<Ident, Token![,]>::parse_terminated);
                 if result.is_err() {
@@ -44,13 +42,13 @@ pub fn button(input: TokenStream) -> TokenStream {
                                 The `gamepad` attribute expects idents to be comma separated
 
                                 = help: use `#[gamepad(South, Home)]`
-                            "#}
+                            "#},
                     ));
                     continue;
                 }
 
                 gamepad_buttons = Some(result.unwrap());
-            },
+            }
             Meta::List(list) if list.path.is_ident("target_state") => {
                 let result: syn::Result<Ident> = list.parse_args();
                 if result.is_err() {
@@ -61,19 +59,22 @@ pub fn button(input: TokenStream) -> TokenStream {
                                 The `target_state` attribute expects a single ident
 
                                 = help: use `#[target_state(Playing)]`
-                            "#}
+                            "#},
                     ));
                     continue;
                 }
 
                 target_state = Some(result.unwrap());
-            },
-            _=> {}
+            }
+            _ => {}
         }
     }
 
     if error.is_none() && target_state.is_none() {
-        error = Some(syn::Error::new(decl.span(), "Expected `target_state` attribute"));
+        error = Some(syn::Error::new(
+            decl.span(),
+            "Expected `target_state` attribute",
+        ));
     }
 
     if let Some(error) = error {
@@ -88,7 +89,6 @@ pub fn button(input: TokenStream) -> TokenStream {
 
     let gamepad_buttons = gamepad_buttons.unwrap_or_default();
     let gamepad_buttons: Vec<_> = gamepad_buttons.iter().collect();
-
 
     let expanded = quote! {
         impl ChangeStateButton for #struct_name {

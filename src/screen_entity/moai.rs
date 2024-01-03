@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use rand::Rng;
 
-use crate::{consts, game_size::GameSize, state::gamescore::GameScore, state::gamestate::GameState};
+use crate::{
+    consts, game_size::GameSize, state::gamescore::GameScore, state::gamestate::GameState,
+};
 
 pub struct MoaiPlugin;
 
@@ -46,11 +48,7 @@ fn load_texture(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(MoaiTexture::new(moai_texture));
 }
 
-fn spawn_moai(
-    mut commands: Commands,
-    moai_texture: Res<MoaiTexture>,
-    x: f32
-) {
+fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
     let mut rng = rand::thread_rng();
 
     commands
@@ -98,11 +96,7 @@ fn spawn_moai(
         });
 }
 
-fn spawn_init_moai(
-    commands: Commands,
-    game_size: Res<GameSize>,
-    moai_texture: Res<MoaiTexture>,
-) {
+fn spawn_init_moai(commands: Commands, game_size: Res<GameSize>, moai_texture: Res<MoaiTexture>) {
     let mut x = if game_size.max_x < game_size.max_y {
         game_size.max_x
     } else {
@@ -120,7 +114,7 @@ fn despawn_all_moai(mut commands: Commands, query_all_moai: Query<Entity, With<M
     }
 }
 
-fn render_moai(mut query_all_moai: Query<(&Moai, &mut Transform)>, ) {
+fn render_moai(mut query_all_moai: Query<(&Moai, &mut Transform)>) {
     for (moai, mut transform) in query_all_moai.iter_mut() {
         transform.translation.x = moai.x;
         transform.translation.y = moai.height - consts::MOAI_HEIGHT / 2.0;

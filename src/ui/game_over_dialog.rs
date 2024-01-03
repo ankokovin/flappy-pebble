@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use super::buttons::{change_state_button, ChangeStateButton, DEFAULT_BUTTON_COLOR};
+use bevy::prelude::*;
 
 use crate::state::{gamescore::GameScore, gamestate::GameState};
 
@@ -111,7 +111,8 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                         },
                         ..Default::default()
                     },
-                    RestartButton))
+                    RestartButton,
+                ))
                 .with_children(|parent| {
                     parent.spawn((
                         TextBundle::from_section(
