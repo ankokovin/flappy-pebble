@@ -12,6 +12,11 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 fn get_window(_window_name: String, _width: f32, _height: f32) -> Window {
     Window {
         fit_canvas_to_parent: true,
+        canvas: if cfg!(not(debug_assertions)) {
+            Some("#game-canvas".into())
+        } else {
+            None
+        },
         ..default()
     }
 }
