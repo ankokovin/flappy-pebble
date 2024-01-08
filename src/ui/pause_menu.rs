@@ -58,7 +58,7 @@ fn spawn_game_pause_menu(mut commands: Commands) {
                         Val::Px(100.0),
                         Val::Px(50.0),
                     ),
-                    ..Default::default()
+                    ..default()
                 },
                 ..default()
             },
@@ -71,7 +71,7 @@ fn spawn_game_pause_menu(mut commands: Commands) {
                     "PAUSED",
                     TextStyle {
                         font_size: 50.0,
-                        ..Default::default()
+                        ..default()
                     },
                 ),
                 Name::new("PauseDialogText"),
@@ -82,9 +82,9 @@ fn spawn_game_pause_menu(mut commands: Commands) {
                         background_color: DEFAULT_BUTTON_COLOR.into(),
                         style: Style {
                             padding: UiRect::all(Val::Px(20.0)),
-                            ..Default::default()
+                            ..default()
                         },
-                        ..Default::default()
+                        ..default()
                     },
                     UnpauseButton,
                 ))
@@ -94,7 +94,7 @@ fn spawn_game_pause_menu(mut commands: Commands) {
                             "CONTINUE",
                             TextStyle {
                                 font_size: 35.0,
-                                ..Default::default()
+                                ..default()
                             },
                         ),
                         Name::new("UnpauseButtonText"),

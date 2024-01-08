@@ -27,7 +27,7 @@ fn get_window(window_name: String, width: f32, height: f32) -> Window {
         title: window_name,
         resizable: true,
         resolution: bevy::window::WindowResolution::new(width, height),
-        ..Default::default()
+        ..default()
     }
 }
 

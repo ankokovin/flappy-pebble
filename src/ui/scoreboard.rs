@@ -48,9 +48,9 @@ fn spawn_scoreboard(mut commands: Commands) {
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     padding: UiRect::all(Val::Px(50.0)),
-                    ..Default::default()
+                    ..default()
                 },
-                ..Default::default()
+                ..default()
             },
             ScoreBoard,
             Name::new("ScoreBoard"),
@@ -59,10 +59,10 @@ fn spawn_scoreboard(mut commands: Commands) {
             parent
                 .spawn((
                     NodeBundle {
-                        style: Style {
-                            ..Default::default()
-                        },
-                        ..Default::default()
+                        //TODO: I probably wanted to change something in style
+                        //      (specifically flex) but forgot to.
+                        style: Style { ..default() },
+                        ..default()
                     },
                     Name::new("ScoreLabelContainer"),
                 ))
@@ -72,7 +72,7 @@ fn spawn_scoreboard(mut commands: Commands) {
                             "Score: ",
                             TextStyle {
                                 font_size: 20.0,
-                                ..Default::default()
+                                ..default()
                             },
                         ),
                         Name::new("ScoreLabelLabel"),
@@ -82,7 +82,7 @@ fn spawn_scoreboard(mut commands: Commands) {
                             "<score>",
                             TextStyle {
                                 font_size: 20.0,
-                                ..Default::default()
+                                ..default()
                             },
                         ),
                         ScoreLabel,

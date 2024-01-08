@@ -68,14 +68,14 @@ fn spawn_moai_body_sprites(parent: &mut ChildBuilder, texture: Handle<Image>) {
                     x: consts::MOAI_WIDTH,
                     y: consts::MOAI_HEIGHT,
                 }),
-                ..Default::default()
+                ..default()
             },
             transform: Transform::from_xyz(
                 0.0,
                 (1.0 - consts::MOAI_BODY_SEGMENTS_OVERLAP_RATIO) * consts::MOAI_HEIGHT * -i as f32,
                 -1.0 * i as f32,
             ),
-            ..Default::default()
+            ..default()
         });
     }
 }
@@ -102,9 +102,9 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
                             x: consts::MOAI_WIDTH,
                             y: consts::MOAI_HEIGHT,
                         }),
-                        ..Default::default()
+                        ..default()
                     },
-                    ..Default::default()
+                    ..default()
                 })
                 .with_children(|parent| spawn_moai_body_sprites(parent, moai_texture.body.clone()));
 
@@ -117,7 +117,7 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
                             x: consts::MOAI_WIDTH,
                             y: consts::MOAI_HEIGHT,
                         }),
-                        ..Default::default()
+                        ..default()
                     },
                     transform: Transform::from_translation(Vec3 {
                         x: 0.0,
@@ -125,7 +125,7 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
                         z: 0.0,
                     })
                     .with_rotation(Quat::from_rotation_z(std::f32::consts::PI)),
-                    ..Default::default()
+                    ..default()
                 })
                 .with_children(|parent| spawn_moai_body_sprites(parent, moai_texture.body.clone()));
         });

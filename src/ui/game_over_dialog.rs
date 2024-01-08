@@ -49,9 +49,9 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                     flex_direction: FlexDirection::Column,
                     align_items: AlignItems::Center,
                     padding: UiRect::all(Val::Px(50.0)),
-                    ..Default::default()
+                    ..default()
                 },
-                ..Default::default()
+                ..default()
             },
             GameOverDialog,
             Name::new("GameOverDialog"),
@@ -62,7 +62,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                     "GAME OVER",
                     TextStyle {
                         font_size: 50.0,
-                        ..Default::default()
+                        ..default()
                     },
                 ),
                 Name::new("GameOverDialogText"),
@@ -72,7 +72,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                     "Score: ".to_string() + &game_score.get_current().to_string(),
                     TextStyle {
                         font_size: 30.0,
-                        ..Default::default()
+                        ..default()
                     },
                 ),
                 Name::new("GameScoreLabel"),
@@ -83,7 +83,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                         "New high score!",
                         TextStyle {
                             font_size: 30.0,
-                            ..Default::default()
+                            ..default()
                         },
                     ),
                     Name::new("NewHighScoreLabel"),
@@ -94,7 +94,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                         "Highscore: ".to_string() + &game_score.get_best().to_string(),
                         TextStyle {
                             font_size: 30.0,
-                            ..Default::default()
+                            ..default()
                         },
                     ),
                     Name::new("HighScoreLabel"),
@@ -107,9 +107,9 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                         background_color: BackgroundColor(DEFAULT_BUTTON_COLOR),
                         style: Style {
                             padding: UiRect::all(Val::Px(20.0)),
-                            ..Default::default()
+                            ..default()
                         },
-                        ..Default::default()
+                        ..default()
                     },
                     RestartButton,
                 ))
@@ -119,7 +119,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                             "RESTART",
                             TextStyle {
                                 font_size: 35.0,
-                                ..Default::default()
+                                ..default()
                             },
                         ),
                         Name::new("RestartButtonText"),
@@ -132,9 +132,9 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                         background_color: BackgroundColor(DEFAULT_BUTTON_COLOR),
                         style: Style {
                             padding: UiRect::all(Val::Px(20.0)),
-                            ..Default::default()
+                            ..default()
                         },
-                        ..Default::default()
+                        ..default()
                     },
                     MainMenuButton,
                 ))
@@ -144,7 +144,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
                             "MAIN MENU",
                             TextStyle {
                                 font_size: 35.0,
-                                ..Default::default()
+                                ..default()
                             },
                         ),
                         Name::new("MainMenuButtonText"),

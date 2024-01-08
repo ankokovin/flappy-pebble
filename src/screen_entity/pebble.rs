@@ -78,9 +78,9 @@ fn spawn_pebble(mut commands: Commands, asset_server: Res<AssetServer>) {
                     x: consts::PEBBLE_WIDTH,
                     y: consts::PEBBLE_HEIGHT,
                 }),
-                ..Default::default()
+                ..default()
             },
-            ..Default::default()
+            ..default()
         },
         Pebble::new(
             rng.gen_range(consts::PEBBLE_START_Y_RANGE.clone()),
