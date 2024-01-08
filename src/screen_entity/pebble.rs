@@ -6,6 +6,7 @@ use rand::Rng;
 use crate::game_size::GameSize;
 use crate::gamepad_util::gamepad_just_pressed;
 use crate::state::gamestate::GameState;
+use crate::touch_util::touch_just_pressed;
 
 use super::moai::Moai;
 
@@ -42,7 +43,8 @@ impl Plugin for PebblePlugin {
                     in_state(GameState::Playing).and_then(
                         input_just_pressed(MouseButton::Left)
                             .or_else(input_just_pressed(KeyCode::Space))
-                            .or_else(gamepad_just_pressed(GamepadButtonType::South)),
+                            .or_else(gamepad_just_pressed(GamepadButtonType::South))
+                            .or_else(touch_just_pressed()),
                     ),
                 ),
             );

@@ -3,6 +3,7 @@ mod game_size;
 mod gamepad_util;
 mod screen_entity;
 mod state;
+mod touch_util;
 mod ui;
 
 use bevy::prelude::*;
