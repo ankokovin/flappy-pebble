@@ -43,19 +43,41 @@ pub struct Moai {
 
 #[derive(Resource)]
 struct MoaiTexture {
-    //TODO: separate head and body sections for better modularity
-    handle: Handle<Image>,
+    head: Handle<Image>,
+    body: Handle<Image>,
 }
 
 impl MoaiTexture {
-    fn new(handle: Handle<Image>) -> MoaiTexture {
-        MoaiTexture { handle }
+    fn new(head: Handle<Image>, body: Handle<Image>) -> MoaiTexture {
+        MoaiTexture { head, body }
     }
 }
 
 fn load_texture(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let moai_texture = asset_server.load("moai.png");
-    commands.insert_resource(MoaiTexture::new(moai_texture));
+    let head = asset_server.load("moai.png");
+    let body = asset_server.load("moai-segment.png");
+    commands.insert_resource(MoaiTexture::new(head, body));
+}
+
+fn spawn_moai_body_sprites(parent: &mut ChildBuilder, texture: Handle<Image>) {
+    for i in 1..=consts::MOAI_BODY_SEGMENTS_COUNT {
+        parent.spawn(SpriteBundle {
+            texture: texture.clone(),
+            sprite: Sprite {
+                custom_size: Some(Vec2 {
+                    x: consts::MOAI_WIDTH,
+                    y: consts::MOAI_HEIGHT,
+                }),
+                ..Default::default()
+            },
+            transform: Transform::from_xyz(
+                0.0,
+                (1.0 - consts::MOAI_BODY_SEGMENTS_OVERLAP_RATIO) * consts::MOAI_HEIGHT * -i as f32,
+                -1.0 * i as f32,
+            ),
+            ..Default::default()
+        });
+    }
 }
 
 fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
@@ -72,37 +94,40 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
         ))
         .with_children(|parent| {
             //down
-            parent.spawn(SpriteBundle {
-                texture: moai_texture.handle.clone(),
-                sprite: Sprite {
-                    custom_size: Some(Vec2 {
-                        x: consts::MOAI_WIDTH,
-                        y: consts::MOAI_HEIGHT,
-                    }),
+            parent
+                .spawn(SpriteBundle {
+                    texture: moai_texture.head.clone(),
+                    sprite: Sprite {
+                        custom_size: Some(Vec2 {
+                            x: consts::MOAI_WIDTH,
+                            y: consts::MOAI_HEIGHT,
+                        }),
+                        ..Default::default()
+                    },
                     ..Default::default()
-                },
-                ..Default::default()
-            });
+                })
+                .with_children(|parent| spawn_moai_body_sprites(parent, moai_texture.body.clone()));
 
             //up
-            parent.spawn(SpriteBundle {
-                texture: moai_texture.handle.clone(),
-                sprite: Sprite {
-                    custom_size: Some(Vec2 {
-                        x: consts::MOAI_WIDTH,
-                        y: consts::MOAI_HEIGHT,
-                    }),
-                    flip_x: true,
-                    flip_y: true,
+            parent
+                .spawn(SpriteBundle {
+                    texture: moai_texture.head.clone(),
+                    sprite: Sprite {
+                        custom_size: Some(Vec2 {
+                            x: consts::MOAI_WIDTH,
+                            y: consts::MOAI_HEIGHT,
+                        }),
+                        ..Default::default()
+                    },
+                    transform: Transform::from_translation(Vec3 {
+                        x: 0.0,
+                        y: consts::MOAI_HEIGHT + consts::MOAI_VERTICAL_DISTANCE,
+                        z: 0.0,
+                    })
+                    .with_rotation(Quat::from_rotation_z(std::f32::consts::PI)),
                     ..Default::default()
-                },
-                transform: Transform::from_translation(Vec3 {
-                    x: 0.0,
-                    y: consts::MOAI_HEIGHT + consts::MOAI_VERTICAL_DISTANCE,
-                    z: 0.0,
-                }),
-                ..Default::default()
-            });
+                })
+                .with_children(|parent| spawn_moai_body_sprites(parent, moai_texture.body.clone()));
         });
 }
 
