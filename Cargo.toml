@@ -11,6 +11,9 @@ bevy = { version = "0.12.1"}
 bevy-inspector-egui = "0.22.1"
 bevy-flappy-pebble-macro = { path = "bevy-flappy-pebble-macro" }
 
+[target.'cfg(target_family = "wasm")'.dependencies]
+gloo-storage = "0.3.0"
+
 
 [features]
 egui = [] # feature has no explicit dependencies
