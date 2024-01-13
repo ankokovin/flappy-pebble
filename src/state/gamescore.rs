@@ -7,25 +7,23 @@ type Score = u32;
 
 #[derive(Debug, Resource, Default)]
 pub struct GameScore {
-    current_value: Score,
-    best_value: Score,
+    current_score: Score,
+    high_score: Score,
     is_high_score: bool,
 }
 
 impl GameScore {
     pub fn inc_score(&mut self) {
-        self.current_value += 1;
-        if self.current_value > self.best_value {
+        self.current_score += 1;
+        if self.current_score > self.high_score {
             self.is_high_score = true;
         }
     }
-
-    pub fn get_current(&self) -> Score {
-        self.current_value
+    pub fn get_current_score(&self) -> Score {
+        self.current_score
     }
-
-    pub fn get_best(&self) -> Score {
-        self.best_value
+    pub fn get_high_score(&self) -> Score {
+        self.high_score
     }
     pub fn is_new_high_score(&self) -> bool {
         self.is_high_score
@@ -44,7 +42,7 @@ impl Plugin for GameScorePlugin {
 }
 
 fn reset_score(mut game_score: ResMut<GameScore>) {
-    game_score.current_value = 0;
+    game_score.current_score = 0;
     game_score.is_high_score = false;
 }
 
@@ -68,8 +66,8 @@ fn save_highscore(highscore: Score) {
 
 fn handle_highscore(mut game_score: ResMut<GameScore>) {
     if game_score.is_high_score {
-        game_score.best_value = game_score.current_value;
-        save_highscore(game_score.best_value);
+        game_score.high_score = game_score.current_score;
+        save_highscore(game_score.high_score);
     }
 }
 
@@ -94,14 +92,14 @@ fn load_highscore(mut score: ResMut<GameScore>) {
             0
         });
     read_highscore = Score::from_be_bytes(buffer);
-    score.best_value = read_highscore;
+    score.high_score = read_highscore;
 }
 
 #[cfg(target_family = "wasm")]
 fn load_highscore(mut score: ResMut<GameScore>) {
     use gloo_storage::{LocalStorage, Storage};
 
-    score.best_value = LocalStorage::get(HIGHSCORE_PATH).unwrap_or_else(|_| {
+    score.high_score = LocalStorage::get(HIGHSCORE_PATH).unwrap_or_else(|_| {
         warn!("Could not read highscore");
         Score::default()
     });

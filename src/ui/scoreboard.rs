@@ -122,7 +122,7 @@ fn update_scoreboard(
     }
     let mut text = text.unwrap();
     let section = text.sections.first_mut().expect("to have a TextSection");
-    section.value = game_score.get_current().to_string();
+    section.value = game_score.get_current_score().to_string();
 }
 
 fn update_is_highscore_label(

@@ -69,7 +69,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
             ));
             parent.spawn((
                 TextBundle::from_section(
-                    "Score: ".to_string() + &game_score.get_current().to_string(),
+                    "Score: ".to_string() + &game_score.get_current_score().to_string(),
                     TextStyle {
                         font_size: 30.0,
                         ..default()
@@ -91,7 +91,7 @@ fn spawn_game_over_dialog(mut commands: Commands, game_score: Res<GameScore>) {
             } else {
                 parent.spawn((
                     TextBundle::from_section(
-                        "Highscore: ".to_string() + &game_score.get_best().to_string(),
+                        "Highscore: ".to_string() + &game_score.get_high_score().to_string(),
                         TextStyle {
                             font_size: 30.0,
                             ..default()
