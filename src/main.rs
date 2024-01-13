@@ -47,17 +47,12 @@ fn main() {
         state::StatePlugin,
         screen_entity::GameEntityPlugin,
         ui::UiPlugin,
-        game_size::GameSizeChangePlugin::new(0.0, 0.0),
-    ))
-    .add_systems(Startup, spawn_camera);
+        game_size::GameSizePlugin::new(0.0, 0.0),
+    ));
 
     if cfg!(feature = "egui") {
         app.add_plugins(WorldInspectorPlugin::default());
     }
 
     app.run();
-}
-
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
 }
