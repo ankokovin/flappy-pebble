@@ -39,6 +39,17 @@ impl Plugin for MoaiPlugin {
 pub struct Moai {
     pub x: f32,
     pub height: f32,
+    pub passed: bool,
+}
+
+impl Moai {
+    fn new(x: f32, height: f32) -> Self {
+        Self {
+            x,
+            height,
+            passed: false,
+        }
+    }
 }
 
 #[derive(Resource)]
@@ -86,10 +97,7 @@ fn spawn_moai(mut commands: Commands, moai_texture: Res<MoaiTexture>, x: f32) {
     commands
         .spawn((
             SpatialBundle::default(),
-            Moai {
-                x,
-                height: rng.gen_range(consts::MOAI_HEIGHT_RANGE.clone()),
-            },
+            Moai::new(x, rng.gen_range(consts::MOAI_HEIGHT_RANGE.clone())),
             Name::new("Moai"),
         ))
         .with_children(|parent| {
@@ -169,8 +177,9 @@ fn move_moai(
         let before = moai.x;
         let after = before - consts::MOAI_MOVE_SPEED * time.delta_seconds();
 
-        if before >= 0.0 && after <= 0.0 {
+        if before >= 0.0 && after <= 0.0 && !moai.passed {
             game_score.inc_score();
+            moai.passed = true;
         }
 
         moai.x = after;
